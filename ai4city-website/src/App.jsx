@@ -40,11 +40,12 @@ export default function App() {
         );
       case 'team':
         return (
-          <div className="pt-32 px-6 md:px-20 min-h-screen max-w-7xl mx-auto">
-            <h1 className="text-5xl font-bold mb-10">People</h1>
-            <div className="bg-blue-50 p-10 rounded-3xl border border-blue-100">
+          <div className="pt-[81px] w-full min-h-screen">
+            
+            <div>
                <TeamPage />
             </div>
+            
           </div>
         );
       default:

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X } from 'lucide-react';
-import { NAV_LINKS, LOGO_CONFIG } from 'data/navigation';
+import { NAV_LINKS, LOGO_CONFIG } from '../data/navigation';
 
 export const Navbar = ({ currentPage, setPage }) => {
   const [isScrolled, setIsScrolled] = useState(false);

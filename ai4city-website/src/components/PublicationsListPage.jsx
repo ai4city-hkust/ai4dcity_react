@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { createRoot } from 'react-dom/client';
 import { MapPin, Mail, Linkedin, Twitter, Github, Menu, X, ChevronRight, Calendar, Clock, Video, ArrowRight, Globe, FileText, Database, GraduationCap } from 'lucide-react';
 import { FadeInSection } from './FadeInSection';
-import { RESOURCES_LIST_ITEMS } from '../data/resources';
+import { PUBLICATION_ITEMS } from '../data/publications';
 
-export const ResourcesListPage = ({ title, description, items, type = "default" }) => {
+export const PublicationsListPage = ({ title, description, items, type = "default" }) => {
               // --- 状态管理 ---
               const [selectedYear, setSelectedYear] = useState('All');
               const [selectedTopic, setSelectedTopic] = useState('All');

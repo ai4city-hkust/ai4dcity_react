@@ -6,7 +6,14 @@ import { AboutPage } from './components/AboutPage';
 import { Footer } from './components/Footer';
 import './index.css';
 import { TeamPage } from './components/TeamPage';
+import { ResourcesListPage } from './components/ResourcesListPage';
+import { RESOURCES_LIST_ITEMS } from './data/resources';
+import { PublicationsListPage } from './components/PublicationsListPage';
+import { PUBLICATION_ITEMS } from './data/publications';
+import { ResearchListPage } from './components/ResearchListPage';
+import { RESEARCH_PROJECTS } from './data/research';
 import { TEAM_DATA } from './data/team';
+
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -34,7 +41,42 @@ export default function App() {
             
           </div>
         );
-      
+      case 'research':
+        return (
+          <div className="pt-[81px] w-full min-h-screen">
+            {/* 修复点：必须传入 title, description 和 items */}
+            <ResearchListPage
+              title="Publications"
+              description="Open datasets and tools for urban research."
+              items={RESEARCH_PROJECTS} 
+              type="publication"
+            />
+          </div>
+        );
+      case 'publication':
+        return (
+          <div className="pt-[81px] w-full min-h-screen">
+            {/* 修复点：必须传入 title, description 和 items */}
+            <PublicationsListPage 
+              title="Publications"
+              description="Open datasets and tools for urban research."
+              items={PUBLICATION_ITEMS} 
+              type="publication"
+            />
+          </div>
+        );
+      case 'resources':
+        return (
+          <div className="pt-[81px] w-full min-h-screen">
+            {/* 修复点：必须传入 title, description 和 items */}
+            <ResourcesListPage 
+              title="Resource & Data"
+              description="Open datasets and tools for urban research."
+              items={RESOURCES_LIST_ITEMS} 
+              type="resources"
+            />
+          </div>
+        );
       case 'about':
         return (
           <div className="pt-[81px] w-full min-h-screen">

@@ -11,6 +11,7 @@ export const ARTICLE_CONTENT = {
     body: [
       "On February 17, 2026, Professor Wufan Zhao was officially presented with the Best Reviewer Award by the American Society for Photogrammetric Engineering and Remote Sensing (ASPRS). "
     ],
+    link:"",
   },
   
   'seminar': {

@@ -51,8 +51,7 @@ export const TEAM_DATA = {
     { name: "Danyang Zhang", role: "Computer vision; 3DGS; AI for City", email: "zdy@gatech.edu", homepage: "", img: "/images/people/zhangdanyang.png" },
     { name: "Hongye Hou", role: "3D vision, multi-model learning", email: "houhongye2001@stu.xjtu.edu.cn", homepage: "", img: "/images/people/houhongye.jpg" },
     { name: "Xuran Hu", role: "Intelligent interpretation of multimodal remote sensing data", email: "XuRanHu@stu.xidian.edu.cn", homepage: "xuran-hu.github.io", img: "/images/people/huxuran.jpg" },
-    { name: "Haoran Gong", role: "computer vision, point clouds, and 3D reconstruction", email: "gonghr@stu.xjtu.edu.cn", homepage: "", img: "/images/people/gonghaoran.jpg" },
-    { name: "Sihan Li", role: "GIS, Information Visualization", email: "15902090311@163.com", homepage: "", img: "/images/people/profile.png" },
+    { name: "Xiaoyu Li", role: "UAV remote sensing, environmental monitoring and LULC classification", email: "xiaoyu6936@gmail.com", homepage: "", img: "/images/people/lixiaoyu.png" },
     { name: "Qican Weng", role: "Spatial science, GeoAI, Visualization", email: "626710943@QQ.com", homepage: "", img: "/images/people/profile.png" },
     { name: "Qinghe Liu", role: "Intelligent point cloud processing", email: "liuqinghe@nwafu.edu.cn", homepage: "", img: "/images/people/profile.png" }
   ],
@@ -60,8 +59,10 @@ export const TEAM_DATA = {
   // 6. 访问学生 (Visiting Students)
   vst: [
     { name: "Bingchen Li", role: "Urban Economics & Regional Economics", email: "bingchen054@gmail.com", homepage: "", img: "/images/people/libingchen.png" },
-    { name: "Xiaoyu Li", role: "UAV remote sensing, environmental monitoring and LULC classification", email: "xiaoyu6936@gmail.com", homepage: "", img: "/images/people/lixiaoyu.png" },
-    { name: "Hongyu Ye", role: "Spatial big data applications and 3D city modelling and simulation", email: "jackson513ye@qq.com", homepage: "https://www.redfish.space/", img: "/images/people/yehongyu.jpg" }
+    
+    { name: "Hongyu Ye", role: "Spatial big data applications and 3D city modelling and simulation", email: "jackson513ye@qq.com", homepage: "https://www.redfish.space/", img: "/images/people/yehongyu.jpg" },
+    { name: "Haoran Gong", role: "computer vision, point clouds, and 3D reconstruction", email: "gonghr@stu.xjtu.edu.cn", homepage: "", img: "/images/people/gonghaoran.jpg" },
+    { name: "Sihan Li", role: "GIS, Information Visualization", email: "15902090311@163.com", homepage: "", img: "/images/people/profile.png" }
   ],
 
   // 7. 访问学者 (Visiting Scholars)

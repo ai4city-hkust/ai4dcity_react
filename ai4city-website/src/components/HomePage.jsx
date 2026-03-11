@@ -26,7 +26,7 @@ export const HomePage = ({
       {/* 1. Hero Section */}
       <div className="relative w-full h-[320px] md:h-[100vh] bg-gray-900 text-white flex justify-center">
         <video
-          className="absolute inset-0 w-full h-full object-cover opacity-60"
+          className="absolute inset-0 w-full h-full object-cover opacity-30"
           autoPlay loop muted playsInline
         >
           <source src="/3drebuildshort.mp4" type="video/mp4" />
@@ -40,7 +40,7 @@ export const HomePage = ({
             
             {ARTICLE_CONTENT['seminar'] && (
               <div 
-                className="cursor-pointer transition group max-w-2xl" 
+                className="cursor-pointer transition group max-w-3xl" 
                 onClick={() => setPage('article', 'seminar')}
               > 
                 <h2 className="text-xl md:text-2xl font-bold mb-2 text-white">Upcoming Seminar</h2>
@@ -81,7 +81,7 @@ export const HomePage = ({
                 return (
                   <div 
                     key={id} 
-                    className={`group relative w-full bg-white border border-gray-100 p-6 md:p-8 transition-all duration-300 rounded-2xl
+                    className={`group relative w-full bg-white border border-gray-100 p-6 md:p-8 transition-all duration-300 rounded-lg
                       ${canNavigate 
                         ? 'hover:border-black hover:shadow-xl cursor-pointer hover:-translate-y-0.5' 
                         : 'cursor-default opacity-60'
@@ -144,57 +144,90 @@ export const HomePage = ({
         </FadeInSection>
 
         {/* --- 其他模块 (Research, People, Resources) --- */}
-        <FadeInSection className="max-w-7xl mx-auto px-6">
-          <h2 className="text-4xl md:text-6xl font-bold mb-12">Research Focus</h2>
-          <div className="space-y-16">
-            {RESEARCH_FOCUS.map((focus, index) => (
-              <div key={focus.id} className={`flex flex-col md:flex-row ${index % 2 !== 0 ? 'md:flex-row-reverse' : ''} gap-12 items-center group`}> 
-                <div className="w-full md:w-3/5 aspect-video bg-gray-100 rounded-3xl overflow-hidden shadow-sm group-hover:shadow-xl transition-all cursor-pointer" onClick={() => setPage('research')}>
-                  <img src={focus.img} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt={focus.title} />
-                </div>
-                <div className="w-full md:w-2/5">
-                  <h3 className="text-3xl font-bold mb-6">{focus.title}</h3>
-                  <p className="text-lg text-gray-600 mb-8 whitespace-pre-line leading-relaxed">{focus.desc}</p>
-                  <a href={focus.link} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 font-bold text-blue-600 hover:underline">
-                    {focus.example} <ChevronRight size={18}/> 
-                  </a>
-                </div>
+        <FadeInSection>
+          <h2 className="px-5 text-4xl sm:text-[64px] font-bold mb-6">Research Focus</h2>
+          {RESEARCH_FOCUS.map((focus, index) => (
+            // 移除 gap, 背景透明/白色 (无底色), 直角
+            <div key={focus.id} className={`flex flex-col md:flex-row ${index % 2 !== 0 ? 'md:flex-row-reverse' : ''} gap-0 items-center mb-8 group hover-zoom-container overflow-hidden`}> 
+              <div 
+                className="w-full md:w-3/4 aspect-[3/2] md:h-[350px] bg-gray-200 overflow-hidden rounded-none relative cursor-pointer" 
+                onClick={() => setPage('research')}
+              >
+                <img 
+                  src={focus.img} 
+                  className="w-full h-full object-cover hover-zoom-img" 
+                  alt={focus.title} 
+                />
               </div>
-            ))}
+              {/* 文字区域无背景色 bg-white/transparent */}
+              <div className="w-full md:w-1/4 p-6 flex flex-col justify-center">
+                  <h3 className="text-2xl font-bold mb-4">{focus.title}</h3>
+                  <p className="text-lg text-black mb-6 text-left whitespace-pre-line">{focus.desc}</p>
+                  <button onClick={() => setPage(focus.link)} className="text-black font-bold hover:underline flex items-center">{focus.example} <ChevronRight size={16}/> </button>
+              </div>
+            </div>
+          ))}
+        </FadeInSection>
+
+        <FadeInSection>
+          {/* 移除 gap, 背景透明/白色, 直角 */}
+          <div className="flex flex-col md:flex-row gap-0 h-auto overflow-hidden rounded-none">
+            <div className="w-full md:w-1/4 pt-0 pr-6 pb-6 pl-6 flex flex-col justify-top">
+              <h2 className="px-5 text-4xl sm:text-[64px] font-bold leading-none text-left">People</h2>
+              <div className="p-6 flex flex-col justify-center text-left">
+                <p className="text-lg lg:text-lg text-black mb-6 text-left">
+                  Our team is a diverse and talented group of researchers, including PhD candidates, MPhil students, Research Assistant (RAs), and visiting students from around the world. Each member brings unique expertise and perspectives from varied academic and professional backgrounds, creating a dynamic collaborative environment. Together, we are committed to advancing cutting-edge research in AI-driven urban modeling and making meaningful contributions to sustainable city development.
+                </p>
+                <button onClick={() => setPage('team')} className="text-black font-bold hover:underline flex items-center">Meet Our Team <ChevronRight size={16}/> </button>
+              </div>
+            </div>
+            <div className="md:w-3/4 aspect-[3/2] md:aspect-auto md:h-[800px] bg-gray-300 relative overflow-hidden hover-zoom-container ">
+              <img src="images/people/group.jpg" className="aspect-[1/2] inset-0 w-full h-full object-cover hover-zoom-img " alt="Team" />
+            </div>
           </div>
         </FadeInSection>
 
-        <FadeInSection className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row gap-16 items-center">
-          <div className="w-full md:w-1/2">
-            <h2 className="text-4xl md:text-6xl font-bold mb-8">Our Team</h2>
-            <p className="text-xl text-gray-600 leading-relaxed mb-10 text-justify">
-              Our team is a diverse and talented group of researchers, including PhD candidates, MPhil students, and visiting scholars from around the world.
-            </p>
-            <button onClick={() => { setPage('team'); window.scrollTo(0,0); }} className="bg-black text-white px-10 py-4 rounded-full font-bold hover:bg-blue-600 transition-all flex items-center gap-2">
-              Meet Our Team <ArrowRight size={20} />
-            </button>
+        <FadeInSection className="flex flex-col md:flex-row gap-0 lg:gap-0">
+          <div className="w-full md:w-1/4">
+              <h2 className="px-5 text-4xl sm:text-[64px] font-bold leading-none">Resource <br/>& <br/>Data</h2>
+              <button onClick={() => setPage('resources')} className="px-5 mt-6 text-lg font-bold hover:underline flex items-center gap-2">
+                  Find something good <ChevronRight size={16}/>
+              </button>
           </div>
-          <div className="w-full md:w-1/2 aspect-square md:aspect-auto md:h-[600px] bg-gray-100 rounded-[3rem] overflow-hidden shadow-2xl">
-            <img src="/images/people/group.jpg" className="w-full h-full object-cover" alt="AI4City Team" />
-          </div>
-        </FadeInSection>
+          <div className="w-full md:w-3/4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-3 gap-6 lg:gap-8">
+              {HOME_RESOURCES_ITEMS.map(item => (
+                <div 
+                    key={item.id} 
+                    className="flex flex-col gap-3 group cursor-pointer hover-zoom-container" 
+                    onClick={() => {
+                        if (item.link) {
+                            window.location.href = item.link;  // 如果有链接，跳转到链接
+                        } else {
+                            setPage('resources');  // 否则返回原本的资源页
+                        }
+                    }}
+                > 
+                  
+                  {/* 图片容器 */}
+                  <div className="aspect-square w-full bg-gray-200 overflow-hidden rounded-none relative">
+                    {item.img ? (
+                      // --- 方案 A: 如果有图片路径，渲染图片 ---
+                      <img 
+                        src={item.img} 
+                        alt={item.title}
+                        className="w-full h-full object-cover hover-zoom-img" 
+                      />
+                    ) : (
+                      // --- 方案 B: 如果没有图片，保留原来的文字占位样式 ---
+                      <div className="w-full h-full bg-gray-300 flex items-center justify-center hover-zoom-img text-gray-500 text-center p-4">
+                        {item.title}
+                      </div>
+                    )}
+                  </div>
 
-        <FadeInSection className="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row gap-16">
-          <div className="w-full lg:w-1/3">
-            <h2 className="text-4xl md:text-6xl font-bold mb-6">Resources <br/>& Data</h2>
-            <button onClick={() => setPage('resources')} className="text-xl font-bold text-blue-600 hover:underline flex items-center gap-2">
-              Explore Repository <ChevronRight size={20}/>
-            </button>
-          </div>
-          <div className="w-full lg:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-8">
-            {RESOURCES_LIST_ITEMS.slice(0, 4).map(item => (
-              <div key={item.id} className="group bg-slate-50 border border-slate-100 p-8 rounded-[2rem] hover:bg-white hover:shadow-2xl transition-all cursor-pointer" onClick={() => item.link ? window.open(item.link, '_blank') : setPage('resources')}>
-                <div className="w-full aspect-video bg-gray-200 rounded-2xl overflow-hidden mb-6">
-                  <img src={item.img} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt={item.title} />
+                  <h3 className="font-bold text-xl leading-tight group-hover:text-blue-600">{item.title}</h3>
                 </div>
-                <h3 className="text-xl font-bold group-hover:text-blue-600 transition-colors">{item.title}</h3>
-              </div>
-            ))}
+              ))}
           </div>
         </FadeInSection>
       </div>

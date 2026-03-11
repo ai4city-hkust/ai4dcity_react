@@ -49,7 +49,7 @@ export const Navbar = ({ currentPage, setPage}) => {
         />
 
         {/* 桌面端菜单 */}
-        <ul className="hidden lg:flex gap-8">
+        <ul className="max-w-7xl hidden lg:flex gap-8">
           {NAV_LINKS.map(link => (
             <li key={link.id}>
               <button 

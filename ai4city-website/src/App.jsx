@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Twitter, Linkedin, Github, ChevronRight } from 'lucide-react';
 import { Navbar } from './components/Navbar';
 import { HomePage } from './components/HomePage';
 import { AboutPage } from './components/AboutPage';
@@ -12,43 +11,46 @@ import { PublicationsListPage } from './components/PublicationsListPage';
 import { PUBLICATION_ITEMS } from './data/publications';
 import { ResearchListPage } from './components/ResearchListPage';
 import { RESEARCH_PROJECTS } from './data/research';
-import { TEAM_DATA } from './data/team';
+import { ArticlePage } from './components/ArticlePage';
 
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
+  const [articleId, setArticleId] = useState(null);
 
-  // 页面内容路由逻辑
+  // setPage now accepts an optional second argument: articleId
+  const setPage = (page, id = null) => {
+    setCurrentPage(page);
+    if (id !== null) setArticleId(id);
+  };
+
   const renderContent = () => {
     switch(currentPage) {
       case 'home':
-         return (
+        return (
           <div className="w-full min-h-screen">
-            
-            <div>
-               <HomePage />
-            </div>
-            
+            <HomePage setPage={setPage} />
+          </div>
+        );
+      case 'article':
+        return (
+          <div className="w-full min-h-screen">
+            <ArticlePage articleId={articleId} setPage={setPage} />
           </div>
         );
       case 'team':
         return (
           <div className="pt-[81px] w-full min-h-screen">
-            
-            <div>
-               <TeamPage />
-            </div>
-            
+            <TeamPage />
           </div>
         );
       case 'research':
         return (
           <div className="pt-[81px] w-full min-h-screen">
-            {/* 修复点：必须传入 title, description 和 items */}
             <ResearchListPage
-              title="Publications"
+              title="Research"
               description="Open datasets and tools for urban research."
-              items={RESEARCH_PROJECTS} 
+              items={RESEARCH_PROJECTS}
               type="publication"
             />
           </div>
@@ -56,11 +58,10 @@ export default function App() {
       case 'publication':
         return (
           <div className="pt-[81px] w-full min-h-screen">
-            {/* 修复点：必须传入 title, description 和 items */}
-            <PublicationsListPage 
+            <PublicationsListPage
               title="Publications"
               description="Open datasets and tools for urban research."
-              items={PUBLICATION_ITEMS} 
+              items={PUBLICATION_ITEMS}
               type="publication"
             />
           </div>
@@ -68,11 +69,10 @@ export default function App() {
       case 'resources':
         return (
           <div className="pt-[81px] w-full min-h-screen">
-            {/* 修复点：必须传入 title, description 和 items */}
-            <ResourcesListPage 
+            <ResourcesListPage
               title="Resource & Data"
               description="Open datasets and tools for urban research."
-              items={RESOURCES_LIST_ITEMS} 
+              items={RESOURCES_LIST_ITEMS}
               type="resources"
             />
           </div>
@@ -80,14 +80,9 @@ export default function App() {
       case 'about':
         return (
           <div className="pt-[81px] w-full min-h-screen">
-            
-            <div>
-               <AboutPage />
-            </div>
-            
+            <AboutPage />
           </div>
         );
-
       default:
         return (
           <div className="pt-32 px-6 md:px-20 min-h-screen max-w-7xl mx-auto text-center">
@@ -102,16 +97,11 @@ export default function App() {
 
   return (
     <div className="min-h-screen font-sans bg-white selection:bg-blue-100">
-      {/* 引用 Navbar 组件 */}
-      <Navbar currentPage={currentPage} setPage={setCurrentPage} />
-      
-      {/* 页面内容区域 */}
+      <Navbar currentPage={currentPage} setPage={setPage} />
       <main className="transition-opacity duration-300">
         {renderContent()}
       </main>
-
-      {/* 基础 Footer */}
-      <Footer currentPage={currentPage} setPage={setCurrentPage} />
+      <Footer currentPage={currentPage} setPage={setPage} />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { MapPin, Mail, Linkedin, Twitter, Github, Menu, X, ChevronDown, ChevronUp, ChevronRight, Calendar, Clock, Video, ArrowRight, Globe, FileText, Database, GraduationCap } from 'lucide-react';
 import { FadeInSection } from './FadeInSection';
 import { ARTICLE_CONTENT } from '../data/articles';
+import { ArticlePage} from '../components/ArticlePage';
 import { HOME_RESOURCES_ITEMS } from '../data/research_field';
 
 

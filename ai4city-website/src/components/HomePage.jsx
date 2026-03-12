@@ -84,7 +84,7 @@ export const HomePage = ({
                     className={`group relative w-full bg-white border border-gray-100 p-6 md:p-8 transition-all duration-300 rounded-lg
                       ${canNavigate 
                         ? 'hover:border-black hover:shadow-xl cursor-pointer hover:-translate-y-0.5' 
-                        : 'cursor-default opacity-60'
+                        : 'cursor-default'
                       }`}
                     onClick={() => {
                       if (!canNavigate) return;
@@ -102,7 +102,7 @@ export const HomePage = ({
                           {item.date}
                         </p>
                         <h3 className={`text-xl md:text-2xl font-bold leading-snug transition-colors
-                          ${canNavigate ? 'group-hover:text-blue-600 text-black' : 'text-gray-500'}
+                          ${canNavigate ? 'group-hover:text-blue-600 text-black' : 'text-black'}
                         `}>
                           {item.title}
                         </h3>
@@ -163,7 +163,15 @@ export const HomePage = ({
               <div className="w-full md:w-1/4 p-6 flex flex-col justify-center">
                   <h3 className="text-2xl font-bold mb-4">{focus.title}</h3>
                   <p className="text-lg text-black mb-6 text-left whitespace-pre-line">{focus.desc}</p>
-                  <button onClick={() => setPage(focus.link)} className="text-black font-bold hover:underline flex items-center">{focus.example} <ChevronRight size={16}/> </button>
+                  <button 
+                  onClick={() => {
+                    if (focus.link && focus.link.startsWith('http')) {
+                      window.open(focus.link, '_blank');  // 外部链接开新标签
+                    } else {
+                      setPage(focus.link);  // 内部页面路由
+                    }
+                  }} 
+                  className="text-black font-bold hover:underline flex items-center">{focus.example} <ChevronRight size={16}/> </button>
               </div>
             </div>
           ))}

@@ -6,10 +6,10 @@ export const ARTICLE_CONTENT = {
     subtitle: "In recognition of outstanding contributions to the peer review process of Photogrammetric Engineering & Remote Sensing (PE&RS) during 2025.",
     date: "February 27, 2026",
     author: "AI4City Lab",
-    img: "/images/news/asprs/certificate.png",
-    abstract: "赵吴凡教授荣获美国摄影测量与遥感学会（ASPRS）颁发的 2025 年度最佳审稿人奖，以表彰其在 PE&RS 期刊审稿工作中表现出的卓越专业素养与学术贡献。",
+    img: "",
+    abstract: "",
     body: [
-      "On February 17, 2026, Professor Wufan Zhao was officially presented with the Best Reviewer Award by the American Society for Photogrammetric Engineering and Remote Sensing (ASPRS). "
+     
     ],
     link:"",
   },

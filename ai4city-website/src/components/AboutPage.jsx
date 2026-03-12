@@ -2,7 +2,7 @@ import React from 'react';
 import { MapPin, Mail, Linkedin, Twitter, Github, Menu, X, ChevronRight, Calendar, Clock, Video, ArrowRight, Globe, FileText, Database, GraduationCap } from 'lucide-react';
 import { FadeInSection } from './FadeInSection';
 
-export const AboutPage = () => {
+export const AboutPage = (originPage = 'home') => {
             return (
                 <div className="pt-[81px] w-full min-h-screen bg-white">
                     

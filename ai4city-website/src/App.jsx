@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
 import { HomePage } from './components/HomePage';
 import { AboutPage } from './components/AboutPage';
@@ -13,15 +13,38 @@ import { ResearchListPage } from './components/ResearchListPage';
 import { RESEARCH_PROJECTS } from './data/research';
 import { ArticlePage } from './components/ArticlePage';
 
-
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
   const [articleId, setArticleId] = useState(null);
+  const [originPage, setOriginPage] = useState('home');
+
+  useEffect(() => {
+    window.history.replaceState({ page: 'home', id: null }, '', '/');
+  }, []);
+
+  useEffect(() => {
+    const handlePopState = (e) => {
+      if (e.state?.page) {
+        setCurrentPage(e.state.page);
+        setArticleId(e.state.id ?? null);
+      } else {
+        setCurrentPage('home');
+      }
+      window.scrollTo(0, 0);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   // setPage now accepts an optional second argument: articleId
   const setPage = (page, id = null) => {
-    setCurrentPage(page);
-    if (id !== null) setArticleId(id);
+  if (page === 'article') setOriginPage(currentPage);
+  setCurrentPage(page);
+  if (id !== null) setArticleId(id);
+  
+  // Push a history entry so the browser back button works
+  window.history.pushState({ page, id }, '', `/${page === 'home' ? '' : page}`);
+  window.scrollTo(0, 0);  // 加这一行
   };
 
   const renderContent = () => {
@@ -35,13 +58,13 @@ export default function App() {
       case 'article':
         return (
           <div className="w-full min-h-screen">
-            <ArticlePage articleId={articleId} setPage={setPage} />
+            <ArticlePage articleId={articleId} setPage={setPage} originPage={originPage}/>
           </div>
         );
       case 'team':
         return (
           <div className="pt-[81px] w-full min-h-screen">
-            <TeamPage />
+            <TeamPage originPage={originPage}/>
           </div>
         );
       case 'research':
@@ -52,6 +75,7 @@ export default function App() {
               description="Open datasets and tools for urban research."
               items={RESEARCH_PROJECTS}
               type="publication"
+              originPage={originPage}
             />
           </div>
         );
@@ -63,6 +87,7 @@ export default function App() {
               description="Open datasets and tools for urban research."
               items={PUBLICATION_ITEMS}
               type="publication"
+              originPage={originPage}
             />
           </div>
         );
@@ -74,13 +99,14 @@ export default function App() {
               description="Open datasets and tools for urban research."
               items={RESOURCES_LIST_ITEMS}
               type="resources"
+              originPage={originPage}
             />
           </div>
         );
       case 'about':
         return (
           <div className="pt-[81px] w-full min-h-screen">
-            <AboutPage />
+            <AboutPage originPage={originPage}/>
           </div>
         );
       default:

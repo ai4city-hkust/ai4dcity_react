@@ -5,12 +5,11 @@ import { MapPin, Mail, Linkedin, Twitter, Github, Menu, X, ChevronDown, ChevronU
 import { FadeInSection } from './FadeInSection';
 import { ARTICLE_CONTENT } from '../data/articles';
 import { ArticlePage} from '../components/ArticlePage';
-import { HOME_RESOURCES_ITEMS } from '../data/research_field';
-
+import { RESEARCH_FOCUS } from '../data/research_field';
+import { HOME_RESOURCES_ITEMS } from '../data/resources_field';
 
 export const HomePage = ({ 
   setPage, 
-  RESEARCH_FOCUS = HOME_RESOURCES_ITEMS
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -23,6 +22,10 @@ export const HomePage = ({
   return (
     <div className="w-full pb-[240px] bg-white text-black">
       
+{/* -----------------------------------------------------------------------------------
+网页顶端大图模块样式与逻辑
+----------------------------------------------------------------------------------- */}
+
       {/* 1. Hero Section */}
       <div className="relative w-full h-[320px] md:h-[100vh] bg-gray-900 text-white flex justify-center">
         <video
@@ -56,6 +59,11 @@ export const HomePage = ({
       </div>
 
       {/* 2. 内容容器 */}
+
+{/* -----------------------------------------------------------------------------------
+新闻模块样式与逻辑
+----------------------------------------------------------------------------------- */}
+
       <div className="max-w-[1920px] mx-auto space-y-64 py-24">
         
         {/* --- News & Events 模块 --- */}
@@ -81,7 +89,7 @@ export const HomePage = ({
                 return (
                   <div 
                     key={id} 
-                    className={`group relative w-full bg-white border border-gray-100 p-6 md:p-8 transition-all duration-300 rounded-lg
+                    className={`group relative w-full bg-white border border-gray-100 p-6 md:p-8 transition-all duration-300 
                       ${canNavigate 
                         ? 'hover:border-black hover:shadow-xl cursor-pointer hover:-translate-y-0.5' 
                         : 'cursor-default'
@@ -144,6 +152,11 @@ export const HomePage = ({
         </FadeInSection>
 
         {/* --- 其他模块 (Research, People, Resources) --- */}
+
+{/* -----------------------------------------------------------------------------------
+研究领域模块样式与逻辑
+----------------------------------------------------------------------------------- */}
+
         <FadeInSection>
           <h2 className="px-5 text-4xl sm:text-[64px] font-bold mb-6">Research Focus</h2>
           {RESEARCH_FOCUS.map((focus, index) => (
@@ -177,6 +190,10 @@ export const HomePage = ({
           ))}
         </FadeInSection>
 
+{/* -----------------------------------------------------------------------------------
+团队模块样式与逻辑
+----------------------------------------------------------------------------------- */}
+
         <FadeInSection>
           {/* 移除 gap, 背景透明/白色, 直角 */}
           <div className="flex flex-col md:flex-row gap-0 h-auto overflow-hidden rounded-none">
@@ -194,6 +211,10 @@ export const HomePage = ({
             </div>
           </div>
         </FadeInSection>
+
+{/* -----------------------------------------------------------------------------------
+资源模块样式与逻辑
+----------------------------------------------------------------------------------- */}
 
         <FadeInSection className="flex flex-col md:flex-row gap-0 lg:gap-0">
           <div className="w-full md:w-1/4">

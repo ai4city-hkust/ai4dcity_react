@@ -1,4 +1,4 @@
-export const HOME_RESOURCES_ITEMS = [
+export const RESEARCH_FOCUS = [
             {
             id: 1, title: "AI based 3D City Modeling",
             desc: `- Generative-AI based 3D modeling

@@ -40,8 +40,8 @@ export const RESEARCH_FOCUS = [
 export const RESEARCH_PROJECTS = [
   {
     id: 4, 
-    title: "ULSR-GS：基于 Gaussian Splatting 的城市级大尺度表面重建",
-    desc: "课题组最新提出的ULSR-GS[2]在此前的MVG-Splatting[3]工作基础上，提出 “点到图像（point-to-photo）分区 + 多视角引导稠密化 + 跨视深度/法向一致性约束”：为每个子区仅分配最相关影像，子区内以多视深度聚合与一致性损失进行稠密化优化，支持跨GPU并行训练并实现子区独立网格提取与无缝拼接；在多套城市级航测数据上，对现有GS方法取得稳定优势，并在总体耗时上显著优于传统基于MVS的方案。据上的泛化能力和计算效率，为遥感测绘、数字孪生等应用开拓新的技术路径。",
+    title: "ULSR-GS: Urban-scale Large Surface Reconstruction based on Gaussian Splatting",
+    desc: "The latest work ULSR-GS[2] from our group, building upon the previous MVG-Splatting[3], proposes a 'point-to-photo partitioning + multi-view guided densification + cross-view depth/normal consistency constraint' framework: only the most relevant images are assigned to each sub-region, which is then optimized through multi-view depth aggregation and consistency loss for densification. It supports cross-GPU parallel training and enables independent mesh extraction with seamless stitching across sub-regions. On multiple urban-scale aerial survey datasets, it achieves consistent improvements over existing GS methods and significantly outperforms traditional MVS-based pipelines in overall runtime, opening new technical pathways for applications such as remote sensing mapping and digital twins.",
     img: "/images/news/ULSR/640.png", 
     date: "Updated Oct 10 2025",
     articleId: 'research-multimodal',
@@ -51,8 +51,8 @@ export const RESEARCH_PROJECTS = [
   },
   {
     id: 3, 
-    title: "ICCV25—Sat2City：利用级联潜空间扩散模型实现单张卫星图像的高保真三维城市生成",
-    desc: "Sat2City成功实现了扩散模型与体素表示的有效结合，首次证明了从单张2D卫星影像高效生成城市级3D模型的可行性。未来，团队研究将着重提升模型在真实城市遥感数据上的泛化能力和计算效率，为遥感测绘、数字孪生等应用开拓新的技术路径。项目主页：https://ai4city-hkust.github.io/Sat2City/",
+    title: "ICCV25—Sat2City: High-Fidelity 3D City Generation from a Single Satellite Image via Cascaded Latent Diffusion Models",
+    desc: "Sat2City achieves effective integration of diffusion models with voxel representations, demonstrating for the first time the feasibility of efficiently generating city-scale 3D models from a single 2D satellite image. Looking ahead, the team will focus on improving the model's generalization capability and computational efficiency on real-world urban remote sensing data, paving new technical pathways for applications such as remote sensing mapping and digital twins. Project page: https://ai4city-hkust.github.io/Sat2City/",
     img: "/images/research/s2c.png", 
     date: "Updated Oct 10 2025",
     articleId: 'research-multimodal',
@@ -62,8 +62,8 @@ export const RESEARCH_PROJECTS = [
   },
   {
     id: 2, 
-    title: "Depth2Elevation：基于视觉基础模型迁移的单视图遥感图像高程估计",
-    desc: "Depth2Elevation模型通过引入尺度调制器和分辨率自适应解码器，有效地将DAM的深度估计能力转移到单视图遥感图像的高程估计任务中。该模型在多个基准数据集上取得了卓越的性能，证明了其在不同尺度和场景下的适用性和泛化能力。结果可为地理信息科学的诸多应用提供了更准确、更可靠的高程数据支持。",
+    title: "Depth2Elevation: Single-View Remote Sensing Image Elevation Estimation via Visual Foundation Model Transfer",
+    desc: "The Depth2Elevation model effectively transfers the depth estimation capability of DAM to the elevation estimation task for single-view remote sensing images by introducing a scale modulator and a resolution-adaptive decoder. The model achieves outstanding performance across multiple benchmark datasets, demonstrating its applicability and generalization ability at varying scales and scenes. The results provide more accurate and reliable elevation data support for a wide range of applications in geographic information science.",
     img: "/images/research/D2Ehr.png", 
     date: "Updated Sep 05 2025",
     articleId: 'Depth2Elevation',
@@ -73,8 +73,8 @@ export const RESEARCH_PROJECTS = [
   },
   {
     id: 1, 
-    title: "gdverse：一个集成的空间分层异质性建模工具",
-    desc: "我们开发了一个专注于空间分层异质性建模的R包gdverse(Lv et al. 2025),通过设计一套统一的API接口和高效的算法实现，以期推动这些空间分层异质性模型的应用",
+    title: "gdverse: An Integrated Spatial Stratified Heterogeneity Modeling Toolkit",
+    desc: "We developed an R package gdverse (Lv et al. 2025) dedicated to spatial stratified heterogeneity modeling. By designing a unified API interface and efficient algorithm implementations, it aims to facilitate the broader application of spatial stratified heterogeneity models.",
     img: "/images/research/gdverse.png", 
     date: "Updated Sep 05 2025",
     topic: "Spatio-temporal (4D) Data Fusion",

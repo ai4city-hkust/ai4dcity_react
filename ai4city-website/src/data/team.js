@@ -17,6 +17,10 @@ export const TEAM_DATA = {
       "PG course, 24fall-25spring, Science of City (5010)", 
       "PG course, GIS and Spatial Analysis (5030), 26spring"
     ],
+    Links: [
+      { label: "KU Leuven Geomatics", url: "https://iiw.kuleuven.be/onderzoek/geomatics/home" },
+      { label: "ITC, University of Twente", url: "https://www.itc.nl/" }
+    ],
     img: "/images/people/wufan.jpg" // 路径前加了 / 以适配 React public 文件夹
   },
 

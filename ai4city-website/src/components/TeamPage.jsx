@@ -121,7 +121,8 @@ export const TeamPage = () => {
             <div className="w-full md:flex-1 text-black">
               <h2 className="text-3xl md:text-4xl font-bold mb-1">{pi.name}</h2>
               <p className="text-lg text-blue-600 font-medium mb-6">{pi.role}</p>
-              <p className="text-md text-gray-700 leading-relaxed text-justify whitespace-pre-line mb-19">{pi.bio}</p>
+              <p className="text-md text-gray-700 leading-relaxed text-justify whitespace-pre-line mb-19
+            [&_a]:text-blue-600 [&_a]:text-blue-600 [&_a:hover]:no-underline">{pi.bio}</p>
               
               <div className="space-y-8">
                 <div>
@@ -134,19 +135,6 @@ export const TeamPage = () => {
                   <h3 className="text-2xl font-bold mb-4 pt-6 border-t border-gray-200">Teaching</h3>
                   <ul className="list-disc pl-6 space-y-2 text-gray-700">
                     {pi.Awards && pi.Awards.map((item, index) => <li key={index} className="text-sm leading-relaxed">{item}</li>)}
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="text-2xl font-bold mb-4 pt-6 border-t border-gray-200">Links</h3>
-                  <ul className="list-disc pl-6 space-y-2 text-gray-700">
-                    {pi.Links && pi.Links.map((link, index) => (
-                      <li key={index}>
-                        <a href={link.url} target="_blank" rel="noopener noreferrer"
-                          className="text-blue-600 hover:underline">
-                          {link.label}
-                        </a>
-                      </li>
-                    ))}
                   </ul>
                 </div>
               </div>

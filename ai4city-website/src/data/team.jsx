@@ -5,7 +5,7 @@ export const TEAM_DATA = {
   pi: {
     name: "Wufan Zhao",
     role: "Principal Investigator",
-    bio: `Wufan ZHAO is an Assistant Professor (tenure-track) and PhD supervisor at HKUST(Guangzhou). He obtained his PhD in 2022 from the Faculty of Geo-Information Science and Earth Observation (ITC), University of Twente, the Netherlands, and conducted post-doctoral research at KU Leuven, Belgium, in 2023. His research interests include AI-based intelligent interpretation of remote-sensing images, 3D urban modeling with particular attention to high-fidelity and generative techniques, and the fusion and analytics of multi-source spatiotemporal data. His work aims to support multi-scale analysis and decision-making for urban-environment and socio-economic challenges, ultimately contributing to the UN Sustainable Development Goals.`,
+    bio: (<>Wufan ZHAO is an Assistant Professor (tenure-track) and PhD supervisor at HKUST(Guangzhou), jointly appointed by <a href="https://soch.hkust-gz.edu.cn/academics/ugod/" target="_blank" rel="noopener noreferrer">Urban Governance and Design (UGOD)</a> and <a href="https://www.hkust-gz.edu.cn/academics/hubs-and-thrust-areas/systems-hub/robotics-and-autonomous-systems/" target="_blank" rel="noopener noreferrer">Robotics and Autonomous Systems (ROAS)</a>. He obtained his PhD in 2022 from the  <a href="https://www.itc.nl/" target="_blank" rel="noopener noreferrer"> Faculty of Geo-Information Science and Earth Observation (ITC)</a>, University of Twente, the Netherlands, and conducted post-doctoral research at <a href="https://iiw.kuleuven.be/onderzoek/geomatics/home" target="_blank" rel="noopener noreferrer" >KU Leuven</a>, Belgium, in 2023. His research interests include AI-based intelligent interpretation of remote-sensing images, 3D urban modeling with particular attention to high-fidelity and generative techniques, and the fusion and analytics of multi-source spatiotemporal data. His work aims to support multi-scale analysis and decision-making for urban-environment and socio-economic challenges, ultimately contributing to the UN Sustainable Development Goals.</>),
     edu: [
       "Editorial Board Member of the Journal of Photogrammetric Engineering & Remote Sensing", 
       "Executive Committee Member, ACM SIGSPATIAL China Chapter",
@@ -16,10 +16,6 @@ export const TEAM_DATA = {
       "PG course, 24fall till now, Maching learning in Remote Sensing (5112)",
       "PG course, 24fall-25spring, Science of City (5010)", 
       "PG course, GIS and Spatial Analysis (5030), 26spring"
-    ],
-    Links: [
-      { label: "KU Leuven Geomatics", url: "https://iiw.kuleuven.be/onderzoek/geomatics/home" },
-      { label: "ITC, University of Twente", url: "https://www.itc.nl/" }
     ],
     img: "/images/people/wufan.jpg" // 路径前加了 / 以适配 React public 文件夹
   },

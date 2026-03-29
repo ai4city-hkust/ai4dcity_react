@@ -77,78 +77,71 @@ export const HomePage = ({
                 Events
               </h2>
             </div>
+          
+            {/* 右侧列表区域 - 滚动列表 + 渐变蒙版 */}
+            <div className="w-full lg:w-3/4 flex flex-col">
+              {/* 滚动容器：固定最大高度 + 可滚动 + 渐变蒙版 */}
+              <div 
+                className="relative overflow-y-auto max-h-[600px] pr-2 scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent"
+                style={{ 
+                  // 渐变蒙版背景：底部向上渐变透明，避免内容生硬消失
+                  maskImage: 'linear-gradient(to bottom, black 85%, transparent 100%)',
+                  WebkitMaskImage: 'linear-gradient(to bottom, black 85%, transparent 100%)'
+                }}
+              >
+                {/* 列表内容：保留原有间距和条目样式，取消折叠逻辑 */}
+                <div className="flex flex-col gap-2 pb-16"> {/* pb-16 给渐变蒙版留空间 */}
+                  {allArticles.map(([id, item]) => { // 直接渲染所有文章，取消 visibleArticles
+                    // 跳转逻辑验证：有外部链接 OR 内部文章有正文内容
+                    const hasExternalLink = item.link && item.link.trim() !== "";
+                    const hasInternalContent = item.body && item.body.length > 0;
+                    const canNavigate = hasExternalLink || hasInternalContent;
 
-            {/* 右侧列表区域 */}
-            <div className="w-full lg:w-3/4 flex flex-col gap-4">
-              {visibleArticles.map(([id, item]) => {
-                // 跳转逻辑验证：有外部链接 OR 内部文章有正文内容
-                const hasExternalLink = item.link && item.link.trim() !== "";
-                const hasInternalContent = item.body && item.body.length > 0;
-                const canNavigate = hasExternalLink || hasInternalContent;
+                    return (
+                      <div 
+                        key={id} 
+                        className={`group relative w-full bg-white border border-gray-100 p-4 md:p-5 transition-all duration-300 
+                          ${canNavigate 
+                            ? 'hover:border-blue-500 hover:shadow-md cursor-pointer hover:-translate-y-0.5' 
+                            : 'cursor-default'
+                          }`}
+                        onClick={() => {
+                          if (!canNavigate) return;
+                          if (hasExternalLink) {
+                            window.open(item.link, '_blank');
+                          } else if (setPage) {
+                            setPage('article', id);
+                            window.scrollTo(0, 0);
+                          }
+                        }}
+                      >
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2">
+                          <div className="flex-1">
+                            <p className="text-xs font-semibold text-gray-500 mb-1 tracking-wide">
+                              {item.date}
+                            </p>
+                            <h3 className={`text-base md:text-lg font-semibold leading-snug transition-colors
+                              ${canNavigate ? 'group-hover:text-blue-600 text-gray-800' : 'text-gray-800'}
+                            `}>
+                              {item.title}
+                            </h3>
+                            
+                          </div>
 
-                return (
-                  <div 
-                    key={id} 
-                    className={`group relative w-full bg-white border border-gray-100 p-6 md:p-8 transition-all duration-300 
-                      ${canNavigate 
-                        ? 'hover:border-black hover:shadow-xl cursor-pointer hover:-translate-y-0.5' 
-                        : 'cursor-default'
-                      }`}
-                    onClick={() => {
-                      if (!canNavigate) return;
-                      if (hasExternalLink) {
-                        window.open(item.link, '_blank');
-                      } else if (setPage) {
-                        setPage('article', id);
-                        window.scrollTo(0, 0);
-                      }
-                    }}
-                  >
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                      <div className="flex-1">
-                        <p className="text-xs md:text-sm font-bold text-gray-400 mb-2 uppercase tracking-widest">
-                          {item.date}
-                        </p>
-                        <h3 className={`text-xl md:text-2xl font-bold leading-snug transition-colors
-                          ${canNavigate ? 'group-hover:text-blue-600 text-black' : 'text-black'}
-                        `}>
-                          {item.title}
-                        </h3>
-                        {item.abstract && (
-                          <p className="mt-3 text-gray-500 text-sm line-clamp-1 italic">
-                            {item.abstract}
-                          </p>
-                        )}
-                      </div>
-
-                      {/* 交互提示箭头：仅在可跳转时显示 */}
-                      {canNavigate && (
-                        <div className="hidden md:flex items-center justify-center w-10 h-10 rounded-full bg-gray-50 group-hover:bg-blue-600 transition-colors shrink-0">
-                          <ArrowRight size={20} className="text-gray-300 group-hover:text-white transform group-hover:-rotate-45 transition-all duration-300" />
+                          {/* 交互提示箭头：仅在可跳转时显示 */}
+                          {canNavigate && (
+                            <div className="flex md:flex items-center justify-center w-8 h-8 rounded-full bg-gray-50 group-hover:bg-blue-600 transition-colors shrink-0">
+                              <ArrowRight size={16} className="text-gray-300 group-hover:text-white transform group-hover:-rotate-45 transition-all duration-300" />
+                            </div>
+                          )}
                         </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-
-              {/* 展开/折叠控制按钮 */}
-              {allArticles.length > 6 && (
-                <div className="mt-8 flex justify-center lg:justify-start">
-                  <button 
-                    onClick={() => setIsExpanded(!isExpanded)}
-                    className="flex items-center gap-2 px-8 py-3 bg-black text-white rounded-full font-bold hover:bg-blue-600 transition-all shadow-md group"
-                  >
-                    {isExpanded ? (
-                      <>Show Less <ChevronUp size={20} className="group-hover:-translate-y-1 transition-transform"/></>
-                    ) : (
-                      <>Show More News ({allArticles.length - 6}+) <ChevronDown size={20} className="group-hover:translate-y-1 transition-transform"/></>
-                    )}
-                  </button>
+                      </div>
+                    );
+                  })}
                 </div>
-              )}
+              </div>
             </div>
-          </div>
+            </div>
         </FadeInSection>
 
         {/* --- 其他模块 (Research, People, Resources) --- */}

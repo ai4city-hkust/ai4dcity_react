@@ -10,7 +10,7 @@ export const RESEARCH_FOCUS = [
             link: "https://www.sciencedirect.com/science/article/pii/S092427162500396X?via%3Dihub"
           },
           {
-            id: 2, title: "Spatio-temporal (4D) Data Fusion",
+            id: 2, title: "Data Understanding",
             desc: `- Multi-modal data representation learning
                     - Spatio-temporal causality
                     - AI Agentic workflow

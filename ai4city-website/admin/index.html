@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI4City Lab — 内容管理后台</title>
+<style>
+  :root {
+    --bg: #0f0f11;
+    --surface: #18181c;
+    --surface2: #22222a;
+    --border: #2e2e38;
+    --accent: #4f8cff;
+    --accent2: #ff6b35;
+    --green: #3ddc84;
+    --red: #ff5c5c;
+    --text: #e8e8f0;
+    --muted: #7a7a8e;
+    --radius: 10px;
+    --font: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    --sans: system-ui, -apple-system, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+  /* ── Top Bar ── */
+  #topbar {
+    display: flex; align-items: center; gap: 16px;
+    padding: 0 20px; height: 52px;
+    background: var(--surface); border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  #topbar .logo { font-size: 14px; font-weight: 700; letter-spacing: 0.05em; color: var(--accent); }
+  #topbar .spacer { flex: 1; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px; border-radius: 6px; font-size: 13px; font-weight: 600;
+    border: none; cursor: pointer; transition: all 0.15s;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #6b9fff; }
+  .btn-success { background: var(--green); color: #000; }
+  .btn-success:hover { background: #5affa0; }
+  .btn-danger { background: var(--red); color: #fff; }
+  .btn-danger:hover { background: #ff8080; }
+  .btn-ghost { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-ghost:hover { background: var(--border); }
+  .btn-warn { background: var(--accent2); color: #fff; }
+  .btn-warn:hover { background: #ff8855; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot.green { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .dot.red { background: var(--red); }
+  .dot.gray { background: var(--muted); }
+
+  /* ── Layout ── */
+  #layout { display: flex; flex: 1; overflow: hidden; }
+
+  /* ── Sidebar ── */
+  #sidebar {
+    width: 200px; background: var(--surface); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto;
+  }
+  .sidebar-section { padding: 12px 12px 4px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+  .nav-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 14px; font-size: 13px; cursor: pointer;
+    border-left: 3px solid transparent; transition: all 0.15s;
+    color: var(--muted); font-weight: 500;
+  }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: rgba(79,140,255,0.1); border-left-color: var(--accent); color: var(--accent); }
+  .nav-icon { font-size: 15px; width: 18px; text-align: center; }
+
+  /* ── Main ── */
+  #main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  /* ── Panel ── */
+  .panel { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+  .panel.active { display: flex; }
+  .panel-header {
+    padding: 16px 24px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .panel-title { font-size: 18px; font-weight: 700; }
+  .panel-desc { font-size: 12px; color: var(--muted); }
+  .panel-body { flex: 1; overflow-y: auto; padding: 20px 24px; }
+
+  /* ── Code Editor ── */
+  .editor-wrap { display: flex; flex-direction: column; height: 100%; gap: 12px; }
+  .editor-toolbar { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+  .editor-toolbar .info { font-size: 12px; color: var(--muted); margin-left: auto; }
+  textarea.code-editor {
+    flex: 1; background: var(--surface); border: 1px solid var(--border);
+    color: #a8d8a8; font-family: var(--font); font-size: 13px; line-height: 1.6;
+    padding: 16px; border-radius: var(--radius); resize: none; outline: none;
+    tab-size: 2; min-height: 400px;
+  }
+  textarea.code-editor:focus { border-color: var(--accent); }
+  .save-status { font-size: 12px; padding: 4px 10px; border-radius: 4px; }
+  .save-status.ok { background: rgba(61,220,132,0.15); color: var(--green); }
+  .save-status.err { background: rgba(255,92,92,0.15); color: var(--red); }
+
+  /* ── Media Panel ── */
+  .media-layout { display: flex; gap: 16px; height: 100%; }
+  .folder-list { width: 160px; flex-shrink: 0; display: flex; flex-direction: column; gap: 4px; }
+  .folder-btn {
+    padding: 8px 12px; border-radius: 6px; font-size: 13px; cursor: pointer;
+    background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+    text-align: left; font-weight: 500; transition: all 0.15s;
+  }
+  .folder-btn:hover { border-color: var(--accent); }
+  .folder-btn.active { background: rgba(79,140,255,0.15); border-color: var(--accent); color: var(--accent); }
+  .media-right { flex: 1; display: flex; flex-direction: column; gap: 12px; overflow: hidden; }
+  .drop-zone {
+    border: 2px dashed var(--border); border-radius: var(--radius);
+    padding: 24px; text-align: center; cursor: pointer;
+    transition: all 0.2s; color: var(--muted); font-size: 13px;
+    flex-shrink: 0;
+  }
+  .drop-zone:hover, .drop-zone.drag-over { border-color: var(--accent); color: var(--accent); background: rgba(79,140,255,0.05); }
+  .drop-zone input { display: none; }
+  .drop-zone .drop-icon { font-size: 28px; margin-bottom: 6px; }
+  .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; overflow-y: auto; flex: 1; }
+  .media-card {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+    overflow: hidden; cursor: pointer; transition: all 0.15s; position: relative;
+  }
+  .media-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .media-card img, .media-card video { width: 100%; height: 80px; object-fit: cover; display: block; background: var(--surface2); }
+  .media-card .media-name { padding: 5px 7px; font-size: 10px; color: var(--muted); word-break: break-all; line-height: 1.3; }
+  .media-card .media-del {
+    position: absolute; top: 4px; right: 4px; background: rgba(255,92,92,0.85);
+    color: #fff; border: none; border-radius: 4px; font-size: 11px; padding: 1px 5px;
+    cursor: pointer; display: none;
+  }
+  .media-card:hover .media-del { display: block; }
+  .media-path-copy { cursor: pointer; }
+  .media-path-copy:hover { color: var(--accent); }
+
+  /* ── Terminal ── */
+  .terminal {
+    background: #0a0a0a; border: 1px solid var(--border); border-radius: var(--radius);
+    font-family: var(--font); font-size: 12px; padding: 12px 16px;
+    overflow-y: auto; flex: 1; line-height: 1.5;
+  }
+  .log-out { color: #c8ffc8; }
+  .log-err { color: #ffaaaa; }
+  .log-sys { color: #aaaaff; }
+
+  /* ── Notifications ── */
+  #toast {
+    position: fixed; bottom: 20px; right: 20px; z-index: 9999;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .toast-item {
+    padding: 10px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    animation: slide-in 0.2s ease;
+  }
+  .toast-item.ok { background: rgba(61,220,132,0.9); color: #000; }
+  .toast-item.err { background: rgba(255,92,92,0.9); color: #fff; }
+  .toast-item.info { background: rgba(79,140,255,0.9); color: #fff; }
+  @keyframes slide-in { from { transform: translateX(40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+  /* ── Article editor ── */
+  .article-list { display: flex; flex-direction: column; gap: 8px; }
+  .article-item {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px 16px; display: flex; align-items: center; gap: 12px;
+    cursor: pointer; transition: all 0.15s;
+    user-select: none;
+  }
+  .article-item:hover { border-color: var(--accent); }
+  .article-item.selected { border-color: var(--accent); background: rgba(79,140,255,0.08); }
+  .article-item.drag-over { border-color: var(--accent2); background: rgba(255,107,53,0.12); transform: scale(1.01); }
+  .article-item.dragging { opacity: 0.4; border-style: dashed; }
+  .drag-handle { color: var(--muted); font-size: 14px; cursor: grab; padding: 0 2px; flex-shrink: 0; line-height: 1; }
+  .drag-handle:active { cursor: grabbing; }
+  .article-id { font-family: var(--font); font-size: 11px; color: var(--accent); min-width: 120px; }
+  .article-title { font-size: 13px; color: var(--text); flex: 1; }
+  .article-date { font-size: 11px; color: var(--muted); }
+
+  .form-editor { display: flex; flex-direction: column; gap: 12px; }
+  .form-row { display: flex; gap: 12px; }
+  .form-group { display: flex; flex-direction: column; gap: 5px; flex: 1; }
+  .form-group label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+  .form-group input, .form-group textarea, .form-group select {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 6px;
+    color: var(--text); font-size: 13px; padding: 8px 12px; outline: none;
+    font-family: inherit; transition: border-color 0.15s;
+  }
+  .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--accent); }
+  .form-group textarea { resize: vertical; min-height: 80px; }
+
+  /* ── Body blocks editor ── */
+  .body-blocks { display: flex; flex-direction: column; gap: 8px; }
+  .body-block {
+    background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+    overflow: hidden;
+  }
+  .body-block-header {
+    display: flex; align-items: center; gap: 8px; padding: 6px 10px;
+    background: rgba(0,0,0,0.2); border-bottom: 1px solid var(--border);
+    font-size: 11px; font-weight: 700; color: var(--muted);
+  }
+  .body-block-header .block-type { color: var(--accent); text-transform: uppercase; }
+  .body-block-header .block-actions { margin-left: auto; display: flex; gap: 4px; }
+  .block-btn { background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 4px; padding: 2px 6px; font-size: 10px; cursor: pointer; }
+  .block-btn:hover { background: var(--border); color: var(--text); }
+  .body-block-content { padding: 10px; }
+  .body-block-content textarea { width: 100%; background: none; border: none; color: #a8d8a8; font-family: var(--font); font-size: 12px; line-height: 1.6; resize: vertical; outline: none; min-height: 60px; }
+  .img-block-fields { display: flex; flex-direction: column; gap: 6px; }
+  .img-block-fields input { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; color: var(--text); padding: 5px 8px; font-size: 12px; outline: none; }
+  .img-block-fields input:focus { border-color: var(--accent); }
+  .add-block-btns { display: flex; gap: 6px; }
+
+  .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+  .tab { padding: 8px 18px; font-size: 13px; cursor: pointer; border-bottom: 2px solid transparent; color: var(--muted); font-weight: 500; }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Articles panel split view */
+  .articles-split { display: flex; gap: 0; height: 100%; overflow: hidden; }
+  .articles-left { width: 280px; flex-shrink: 0; border-right: 1px solid var(--border); overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .articles-right { flex: 1; overflow-y: auto; padding: 20px; }
+
+  /* Team section */
+  .team-section-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 16px 0 8px; padding-bottom: 4px; border-bottom: 1px solid var(--border); }
+  .member-list { display: flex; flex-direction: column; gap: 6px; margin-bottom: 8px; }
+  .member-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 8px 12px; display: flex; align-items: center; gap: 10px; }
+  .member-name { font-size: 13px; font-weight: 600; min-width: 120px; }
+  .member-role { font-size: 12px; color: var(--muted); flex: 1; }
+  .member-btns { display: flex; gap: 4px; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* Progress bar */
+  .progress { height: 3px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .progress-bar { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s; }
+
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .tag-blue { background: rgba(79,140,255,0.2); color: var(--accent); }
+  .tag-green { background: rgba(61,220,132,0.2); color: var(--green); }
+
+  .flex { display: flex; }
+  .items-center { align-items: center; }
+  .gap-8 { gap: 8px; }
+  .flex-1 { flex: 1; }
+  .ml-auto { margin-left: auto; }
+</style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div id="topbar">
+  <div class="logo">⬡ AI4CITY ADMIN</div>
+  <div class="spacer"></div>
+  <div id="dev-status" class="flex items-center gap-8" style="font-size:12px; color:var(--muted)">
+    <div class="dot gray" id="dev-dot"></div>
+    <span id="dev-label">Dev 未运行</span>
+  </div>
+  <button class="btn btn-success" id="btn-dev" onclick="toggleDev()">▶ 启动 Dev</button>
+  <button class="btn btn-warn" onclick="runBuild()">⚙ Build</button>
+  <a href="http://localhost:5173" target="_blank" class="btn btn-ghost" style="text-decoration:none">🌐 预览</a>
+</div>
+
+<!-- Layout -->
+<div id="layout">
+
+  <!-- Sidebar -->
+  <div id="sidebar">
+    <div class="sidebar-section">数据管理</div>
+    <div class="nav-item active" data-panel="articles" onclick="switchPanel(this)">
+      <span class="nav-icon">📰</span> News & Events
+    </div>
+    <div class="nav-item" data-panel="team" onclick="switchPanel(this)">
+      <span class="nav-icon">👥</span> Team 团队
+    </div>
+    <div class="nav-item" data-panel="publications" onclick="switchPanel(this)">
+      <span class="nav-icon">📄</span> Publications
+    </div>
+    <div class="nav-item" data-panel="research" onclick="switchPanel(this)">
+      <span class="nav-icon">🔬</span> Research
+    </div>
+    <div class="nav-item" data-panel="resources" onclick="switchPanel(this)">
+      <span class="nav-icon">🗃</span> Resources
+    </div>
+
+    <div class="sidebar-section" style="margin-top:8px">文件</div>
+    <div class="nav-item" data-panel="media" onclick="switchPanel(this)">
+      <span class="nav-icon">🖼</span> 媒体管理
+    </div>
+
+    <div class="sidebar-section" style="margin-top:8px">高级</div>
+    <div class="nav-item" data-panel="raw-articles" onclick="switchPanel(this)">
+      <span class="nav-icon">📝</span> articles.js
+    </div>
+    <div class="nav-item" data-panel="raw-team" onclick="switchPanel(this)">
+      <span class="nav-icon">📝</span> team.js
+    </div>
+    <div class="nav-item" data-panel="raw-publications" onclick="switchPanel(this)">
+      <span class="nav-icon">📝</span> publications.js
+    </div>
+    <div class="nav-item" data-panel="raw-research" onclick="switchPanel(this)">
+      <span class="nav-icon">📝</span> research.js
+    </div>
+    <div class="nav-item" data-panel="raw-resources" onclick="switchPanel(this)">
+      <span class="nav-icon">📝</span> resources.js
+    </div>
+    <div class="nav-item" data-panel="raw-navigation" onclick="switchPanel(this)">
+      <span class="nav-icon">📝</span> navigation.js
+    </div>
+
+    <div class="sidebar-section" style="margin-top:8px">终端</div>
+    <div class="nav-item" data-panel="terminal" onclick="switchPanel(this)">
+      <span class="nav-icon">🖥</span> 终端输出
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div id="main">
+
+    <!-- ═══════════════════════════════════════════════════════
+         ARTICLES PANEL - Visual Editor
+    ════════════════════════════════════════════════════════════ -->
+    <div class="panel active" id="panel-articles">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">📰 News & Events</div>
+          <div class="panel-desc">管理新闻和活动文章 (articles.js)</div>
+        </div>
+        <div style="margin-left:auto; display:flex; gap:8px">
+          <button class="btn btn-primary" onclick="newArticle()">+ 新建文章</button>
+          <button class="btn btn-success" onclick="saveArticles()">💾 保存所有</button>
+        </div>
+      </div>
+      <div class="panel-body" style="padding:0; overflow:hidden">
+        <div class="articles-split">
+          <div class="articles-left" id="articles-list">
+            <div style="font-size:12px; color:var(--muted); padding:4px">加载中...</div>
+          </div>
+          <div class="articles-right" id="article-editor">
+            <div style="color:var(--muted); font-size:14px; padding:40px 0; text-align:center">
+              👈 选择左侧文章进行编辑，或点击「新建文章」
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         TEAM PANEL
+    ════════════════════════════════════════════════════════════ -->
+    <div class="panel" id="panel-team">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">👥 Team 团队管理</div>
+          <div class="panel-desc">管理团队成员 (team.js)</div>
+        </div>
+        <div style="margin-left:auto; display:flex; gap:8px">
+          <button class="btn btn-success" onclick="saveTeam()">💾 保存</button>
+        </div>
+      </div>
+      <div class="panel-body" id="team-body">
+        <div style="color:var(--muted)">加载中...</div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         PUBLICATIONS PANEL
+    ════════════════════════════════════════════════════════════ -->
+    <div class="panel" id="panel-publications">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">📄 Publications</div>
+          <div class="panel-desc">管理论文列表 (publications.js)</div>
+        </div>
+        <div style="margin-left:auto; display:flex; gap:8px">
+          <button class="btn btn-primary" onclick="newPublication()">+ 新增论文</button>
+          <button class="btn btn-success" onclick="savePublications()">💾 保存</button>
+        </div>
+      </div>
+      <div class="panel-body" id="publications-body">加载中...</div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         RESEARCH PANEL
+    ════════════════════════════════════════════════════════════ -->
+    <div class="panel" id="panel-research">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">🔬 Research Projects</div>
+          <div class="panel-desc">管理研究项目 (research.js — RESEARCH_PROJECTS)</div>
+        </div>
+        <div style="margin-left:auto; display:flex; gap:8px">
+          <button class="btn btn-primary" onclick="newResearch()">+ 新增项目</button>
+          <button class="btn btn-success" onclick="saveResearch()">💾 保存</button>
+        </div>
+      </div>
+      <div class="panel-body" id="research-body">加载中...</div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         RESOURCES PANEL
+    ════════════════════════════════════════════════════════════ -->
+    <div class="panel" id="panel-resources">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">🗃 Resources & Data</div>
+          <div class="panel-desc">管理资源和数据集 (resources.js)</div>
+        </div>
+        <div style="margin-left:auto; display:flex; gap:8px">
+          <button class="btn btn-primary" onclick="newResource()">+ 新增资源</button>
+          <button class="btn btn-success" onclick="saveResources()">💾 保存</button>
+        </div>
+      </div>
+      <div class="panel-body" id="resources-body">加载中...</div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         MEDIA PANEL
+    ════════════════════════════════════════════════════════════ -->
+    <div class="panel" id="panel-media">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">🖼 媒体管理</div>
+          <div class="panel-desc">上传图片到 public/images/ 各子文件夹，点击路径可复制</div>
+        </div>
+      </div>
+      <div class="panel-body" style="overflow:hidden; padding:16px">
+        <div class="media-layout">
+          <div class="folder-list">
+            <div style="font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:6px">文件夹</div>
+            <button class="folder-btn active" onclick="selectFolder(this,'news')">📁 news</button>
+            <button class="folder-btn" onclick="selectFolder(this,'seminar')">📁 seminar</button>
+            <button class="folder-btn" onclick="selectFolder(this,'people')">📁 people</button>
+            <button class="folder-btn" onclick="selectFolder(this,'research')">📁 research</button>
+            <button class="folder-btn" onclick="selectFolder(this,'publication')">📁 publication</button>
+            <button class="folder-btn" onclick="selectFolder(this,'resource')">📁 resource</button>
+            <button class="folder-btn" onclick="selectFolder(this,'frontPage')">📁 frontPage</button>
+          </div>
+          <div class="media-right">
+            <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()"
+                 ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+              <input type="file" id="file-input" multiple accept="image/*,video/*" onchange="handleFileSelect(event)">
+              <div class="drop-icon">📂</div>
+              <div>拖拽文件到此处，或点击选择文件</div>
+              <div style="font-size:11px; margin-top:4px; color:var(--muted)">支持 JPG / PNG / GIF / WebP / MP4 等格式</div>
+            </div>
+            <div id="upload-progress" style="display:none">
+              <div class="progress"><div class="progress-bar" id="prog-bar"></div></div>
+            </div>
+            <div id="media-grid" class="media-grid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         RAW EDITOR PANELS
+    ════════════════════════════════════════════════════════════ -->
+    <div class="panel" id="panel-raw-articles">
+      <div class="panel-header"><div class="panel-title">📝 articles.js 原始编辑</div></div>
+      <div class="panel-body"><div class="editor-wrap" id="raw-wrap-articles"></div></div>
+    </div>
+    <div class="panel" id="panel-raw-team">
+      <div class="panel-header"><div class="panel-title">📝 team.js 原始编辑</div></div>
+      <div class="panel-body"><div class="editor-wrap" id="raw-wrap-team"></div></div>
+    </div>
+    <div class="panel" id="panel-raw-publications">
+      <div class="panel-header"><div class="panel-title">📝 publications.js 原始编辑</div></div>
+      <div class="panel-body"><div class="editor-wrap" id="raw-wrap-publications"></div></div>
+    </div>
+    <div class="panel" id="panel-raw-research">
+      <div class="panel-header"><div class="panel-title">📝 research.js 原始编辑</div></div>
+      <div class="panel-body"><div class="editor-wrap" id="raw-wrap-research"></div></div>
+    </div>
+    <div class="panel" id="panel-raw-resources">
+      <div class="panel-header"><div class="panel-title">📝 resources.js 原始编辑</div></div>
+      <div class="panel-body"><div class="editor-wrap" id="raw-wrap-resources"></div></div>
+    </div>
+    <div class="panel" id="panel-raw-navigation">
+      <div class="panel-header"><div class="panel-title">📝 navigation.js 原始编辑</div></div>
+      <div class="panel-body"><div class="editor-wrap" id="raw-wrap-navigation"></div></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         TERMINAL PANEL
+    ════════════════════════════════════════════════════════════ -->
+    <div class="panel" id="panel-terminal">
+      <div class="panel-header">
+        <div class="panel-title">🖥 终端输出</div>
+        <div style="margin-left:auto; display:flex; gap:8px">
+          <button class="btn btn-ghost" onclick="clearLogs()">清空</button>
+          <div class="tabs" style="margin:0; border:0; margin-left:8px">
+            <div class="tab active" onclick="setLogTab('dev',this)">Dev Server</div>
+            <div class="tab" onclick="setLogTab('build',this)">Build</div>
+          </div>
+        </div>
+      </div>
+      <div class="panel-body" style="padding:16px; overflow:hidden; display:flex; flex-direction:column">
+        <div class="terminal" id="terminal"></div>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- Media Picker Modal -->
+<div id="picker-modal" style="
+  display:none; position:fixed; inset:0; z-index:9000;
+  background:rgba(0,0,0,0.7); align-items:center; justify-content:center">
+  <div style="
+    background:var(--surface); border:1px solid var(--border); border-radius:12px;
+    width:min(860px,95vw); max-height:85vh; display:flex; flex-direction:column; overflow:hidden">
+    <!-- Header -->
+    <div style="padding:14px 18px; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:12px; flex-shrink:0">
+      <div style="font-size:15px;font-weight:700">🖼 选择媒体文件</div>
+      <div style="font-size:12px;color:var(--muted)">点击图片即可插入路径</div>
+      <button onclick="closeMediaPicker()" style="margin-left:auto;background:none;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:13px">✕ 关闭</button>
+    </div>
+    <!-- Folder tabs -->
+    <div id="picker-folder-bar" style="display:flex;flex-wrap:wrap;gap:6px;padding:10px 18px;border-bottom:1px solid var(--border);flex-shrink:0"></div>
+    <!-- Grid -->
+    <div id="picker-grid" style="
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(110px,1fr));
+      gap:8px; padding:14px 18px; overflow-y:auto; flex:1"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════════════════════
+const API = 'http://localhost:3737';
+let currentFolder = 'news';
+let devRunning = false;
+let currentLogTab = 'dev';
+let logPointer = { dev: 0, build: 0 };
+let logPollInterval = null;
+
+// In-memory data stores
+let articlesData = {};   // { id: {...} }
+let teamData = {};
+let publicationsData = [];
+let researchData = [];
+let resourcesData = [];
+
+let selectedArticleId = null;
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════════════════════════
+function toast(msg, type='ok') {
+  const d = document.createElement('div');
+  d.className = `toast-item ${type}`;
+  d.textContent = msg;
+  document.getElementById('toast').appendChild(d);
+  setTimeout(() => d.remove(), 3000);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════════════════════════════════
+function switchPanel(el) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+  const id = el.dataset.panel;
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+
+  // Lazy load
+  if (id === 'articles') loadArticles();
+  if (id === 'team') loadTeam();
+  if (id === 'publications') loadPublications();
+  if (id === 'research') loadResearch();
+  if (id === 'resources') loadResources();
+  if (id === 'media') { selectFolder(document.querySelector('.folder-btn.active'), currentFolder); }
+  if (id.startsWith('raw-')) {
+    const name = id.replace('raw-', '');
+    loadRawEditor(name);
+  }
+  if (id === 'terminal') startLogPoll();
+  else stopLogPoll();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// API HELPERS
+// ═══════════════════════════════════════════════════════════════════════════
+async function apiGet(path) {
+  const r = await fetch(API + path);
+  return r.json();
+}
+async function apiPost(path, body) {
+  const r = await fetch(API + path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  return r.json();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RAW EDITOR
+// ═══════════════════════════════════════════════════════════════════════════
+async function loadRawEditor(name) {
+  const wrap = document.getElementById('raw-wrap-' + name);
+  if (wrap.dataset.loaded) return;
+  wrap.dataset.loaded = '1';
+
+  const { content } = await apiGet('/api/data/' + name);
+  wrap.innerHTML = `
+    <div class="editor-toolbar">
+      <button class="btn btn-success" onclick="saveRaw('${name}')">💾 保存</button>
+      <span class="info">${name}.js — 编辑后点击保存，数据立即写入文件</span>
+      <span id="raw-status-${name}"></span>
+    </div>
+    <textarea class="code-editor" id="raw-ta-${name}" spellcheck="false">${escHtml(content)}</textarea>
+  `;
+}
+
+async function saveRaw(name) {
+  const content = document.getElementById('raw-ta-' + name).value;
+  await apiPost('/api/data/' + name, { content });
+  // Invalidate parsed cache
+  delete document.getElementById('raw-wrap-' + name).dataset.loaded;
+  toast(`✅ ${name}.js 已保存`, 'ok');
+}
+
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ═══════════════════════════════════════════════════════════════════════════
+// ARTICLES
+// ═══════════════════════════════════════════════════════════════════════════
+async function loadArticles() {
+  const res = await apiGet('/api/parsed/articles');
+  if (!res.ok) {
+    toast('解析 articles.js 失败: ' + (res.error||''), 'err');
+    return;
+  }
+  articlesData = res.data;
+  renderArticleList();
+}
+
+function renderArticleList() {
+  const list = document.getElementById('articles-list');
+  const ids = Object.keys(articlesData); // natural order — user controls via drag
+  list.innerHTML = ids.map(id => {
+    const a = articlesData[id];
+    return `<div class="article-item${selectedArticleId===id?' selected':''}"
+      data-id="${id}"
+      draggable="true"
+      onclick="selectArticle('${id}')"
+      ondragstart="articleDragStart(event,'${id}')"
+      ondragover="articleDragOver(event)"
+      ondragleave="articleDragLeave(event)"
+      ondrop="articleDrop(event,'${id}')"
+      ondragend="articleDragEnd(event)">
+      <span class="drag-handle" title="拖动排序" onclick="event.stopPropagation()">⠿</span>
+      <div style="flex:1; min-width:0">
+        <div class="article-id">${id}</div>
+        <div class="article-title" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.title||'(无标题)'}</div>
+        <div class="article-date">${a.date||''}</div>
+      </div>
+      <button class="btn btn-danger" style="padding:3px 8px;font-size:11px" onclick="event.stopPropagation();deleteArticle('${id}')">✕</button>
+    </div>`;
+  }).join('');
+}
+
+// ── Drag-and-drop reordering ──────────────────────────────────────────
+let _dragSrcId = null;
+
+function articleDragStart(e, id) {
+  _dragSrcId = id;
+  e.dataTransfer.effectAllowed = 'move';
+  e.currentTarget.classList.add('dragging');
+}
+function articleDragOver(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  e.currentTarget.classList.add('drag-over');
+}
+function articleDragLeave(e) {
+  e.currentTarget.classList.remove('drag-over');
+}
+function articleDrop(e, targetId) {
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  if (!_dragSrcId || _dragSrcId === targetId) return;
+
+  // Reorder articlesData keys
+  const keys = Object.keys(articlesData);
+  const srcIdx = keys.indexOf(_dragSrcId);
+  const tgtIdx = keys.indexOf(targetId);
+  if (srcIdx === -1 || tgtIdx === -1) return;
+
+  // Remove src, insert before target
+  keys.splice(srcIdx, 1);
+  const newTgt = keys.indexOf(targetId);
+  keys.splice(newTgt, 0, _dragSrcId);
+
+  // Rebuild articlesData with new key order
+  const reordered = {};
+  keys.forEach(k => { reordered[k] = articlesData[k]; });
+  articlesData = reordered;
+
+  renderArticleList();
+  // Re-highlight selected item without re-rendering editor
+  if (selectedArticleId) {
+    const el = document.querySelector(`.article-item[data-id="${selectedArticleId}"]`);
+    if (el) el.classList.add('selected');
+  }
+}
+function articleDragEnd(e) {
+  e.currentTarget.classList.remove('dragging');
+  _dragSrcId = null;
+}
+
+function selectArticle(id) {
+  selectedArticleId = id;
+  document.querySelectorAll('.article-item').forEach(el => el.classList.remove('selected'));
+  const el = document.querySelector(`.article-item[data-id="${id}"]`);
+  if (el) el.classList.add('selected');
+  renderArticleEditor(id);
+}
+
+function renderArticleEditor(id) {
+  const a = articlesData[id] || {};
+  const editor = document.getElementById('article-editor');
+
+  const bodyHtml = renderBodyBlocks(a.body || [], id);
+  const detailsHtml = (a.details||[]).map((d,i) => `
+    <div class="flex gap-8 items-center" style="margin-bottom:6px">
+      <input style="flex:1;background:var(--surface2);border:1px solid var(--border);border-radius:4px;color:var(--text);padding:5px 8px;font-size:12px"
+             value="${escAttr(d.text||'')}" onchange="updateDetail('${id}',${i},this.value)" placeholder="详情文本">
+      <button class="block-btn" onclick="removeDetail('${id}',${i})">✕</button>
+    </div>
+  `).join('');
+
+  editor.innerHTML = `
+    <div style="font-size:13px; font-weight:700; color:var(--accent); margin-bottom:16px">编辑: ${id}</div>
+    <div class="form-editor">
+      <div class="form-row">
+        <div class="form-group" style="flex:0 0 220px">
+          <label>Article ID (key) — 改完按 Enter 确认</label>
+          <input value="${escAttr(id)}" id="ae-id"
+            style="font-family:var(--font);color:var(--accent)"
+            onkeydown="if(event.key==='Enter'){event.preventDefault();renameArticle('${id}',this.value.trim())}"
+            onblur="renameArticle('${id}',this.value.trim())"
+            title="修改后按 Enter 或点击其他地方确认">
+        </div>
+        <div class="form-group" style="flex:0 0 180px">
+          <label>Date</label>
+          <input value="${escAttr(a.date||'')}" onchange="updateArticleField('${id}','date',this.value)" placeholder="e.g. February 27, 2026">
+        </div>
+        <div class="form-group">
+          <label>Author</label>
+          <input value="${escAttr(a.author||'')}" onchange="updateArticleField('${id}','author',this.value)">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Title</label>
+        <input value="${escAttr(a.title||'')}" onchange="updateArticleField('${id}','title',this.value)">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Image Path (/images/...)</label>
+          <input value="${escAttr(a.img||'')}" onchange="updateArticleField('${id}','img',this.value)" placeholder="/images/news/xxx.png">
+        </div>
+        <div class="form-group">
+          <label>External Link (留空=内部文章)</label>
+          <input value="${escAttr(a.link||'')}" onchange="updateArticleField('${id}','link',this.value)" placeholder="https://...">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Site / Location</label>
+          <input value="${escAttr(a.site||'')}" onchange="updateArticleField('${id}','site',this.value)">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Abstract (摘要)</label>
+        <textarea onchange="updateArticleField('${id}','abstract',this.value)">${escHtml(a.abstract||'')}</textarea>
+      </div>
+
+      <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-top:8px; margin-bottom:6px">
+        正文 Body Blocks
+      </div>
+      <div class="body-blocks" id="body-blocks-${id}">${bodyHtml}</div>
+      <div class="add-block-btns" style="margin-top:8px">
+        <button class="btn btn-ghost" style="font-size:12px;padding:5px 12px" onclick="addBlock('${id}','text')">+ 文字段落</button>
+        <button class="btn btn-ghost" style="font-size:12px;padding:5px 12px" onclick="addBlock('${id}','image')">+ 图片</button>
+      </div>
+
+      <div style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted); margin-top:16px; margin-bottom:6px">
+        Event Details (活动详情)
+      </div>
+      <div id="details-blocks-${id}">${detailsHtml}</div>
+      <button class="btn btn-ghost" style="font-size:12px;padding:5px 12px;margin-top:6px" onclick="addDetail('${id}')">+ 添加详情</button>
+    </div>
+  `;
+}
+
+function renderBodyBlocks(body, id) {
+  return body.map((item, i) => {
+    if (typeof item === 'string') {
+      return `<div class="body-block">
+        <div class="body-block-header">
+          <span class="block-type">📝 文本</span>
+          <div class="block-actions">
+            <button class="block-btn" onclick="moveBlock('${id}',${i},-1)">↑</button>
+            <button class="block-btn" onclick="moveBlock('${id}',${i},1)">↓</button>
+            <button class="block-btn" style="color:var(--red)" onclick="removeBlock('${id}',${i})">✕</button>
+          </div>
+        </div>
+        <div class="body-block-content">
+          <textarea onchange="updateBlock('${id}',${i},'text',this.value)">${escHtml(item)}</textarea>
+        </div>
+      </div>`;
+    } else if (item.type === 'image') {
+      return `<div class="body-block">
+        <div class="body-block-header">
+          <span class="block-type">🖼 图片</span>
+          <div class="block-actions">
+            <button class="block-btn" onclick="moveBlock('${id}',${i},-1)">↑</button>
+            <button class="block-btn" onclick="moveBlock('${id}',${i},1)">↓</button>
+            <button class="block-btn" style="color:var(--red)" onclick="removeBlock('${id}',${i})">✕</button>
+          </div>
+        </div>
+        <div class="body-block-content">
+          <div class="img-block-fields">
+            <input value="${escAttr(item.src||'')}" placeholder="图片路径 /images/..." onchange="updateBlock('${id}',${i},'src',this.value)">
+            <input value="${escAttr(item.caption||'')}" placeholder="图片说明" onchange="updateBlock('${id}',${i},'caption',this.value)">
+          </div>
+        </div>
+      </div>`;
+    }
+    return '';
+  }).join('');
+}
+
+function updateArticleField(id, field, value) {
+  if (!articlesData[id]) articlesData[id] = {};
+  articlesData[id][field] = value;
+}
+function updateBlock(id, i, field, value) {
+  const body = articlesData[id].body;
+  if (field === 'text') body[i] = value;
+  else body[i][field] = value;
+}
+function updateDetail(id, i, value) {
+  articlesData[id].details[i] = { text: value };
+}
+function removeDetail(id, i) {
+  articlesData[id].details.splice(i, 1);
+  renderArticleEditor(id);
+}
+function addDetail(id) {
+  if (!articlesData[id].details) articlesData[id].details = [];
+  articlesData[id].details.push({ text: '' });
+  renderArticleEditor(id);
+}
+function addBlock(id, type) {
+  if (!articlesData[id].body) articlesData[id].body = [];
+  if (type === 'text') articlesData[id].body.push('');
+  else articlesData[id].body.push({ type: 'image', src: '', caption: '' });
+  renderArticleEditor(id);
+}
+function removeBlock(id, i) {
+  articlesData[id].body.splice(i, 1);
+  renderArticleEditor(id);
+}
+function moveBlock(id, i, dir) {
+  const body = articlesData[id].body;
+  const ni = i + dir;
+  if (ni < 0 || ni >= body.length) return;
+  [body[i], body[ni]] = [body[ni], body[i]];
+  renderArticleEditor(id);
+}
+
+function newArticle() {
+  const id = 'article-' + Date.now();
+  articlesData[id] = { title: '新文章', date: new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}), author: 'AI4City Lab', body: [], link: '', img: '', abstract: '', details: [] };
+  renderArticleList();
+  selectArticle(id);
+  toast('已创建新文章: ' + id, 'info');
+}
+
+function deleteArticle(id) {
+  if (!confirm(`确认删除文章 "${id}"？`)) return;
+  delete articlesData[id];
+  if (selectedArticleId === id) {
+    selectedArticleId = null;
+    document.getElementById('article-editor').innerHTML = '<div style="color:var(--muted);font-size:14px;padding:40px 0;text-align:center">文章已删除</div>';
+  }
+  renderArticleList();
+  toast('已删除: ' + id);
+}
+
+function renameArticle(oldId, newId) {
+  // No change
+  if (newId === oldId) return;
+  // Empty
+  if (!newId) {
+    toast('ID 不能为空', 'err');
+    // Reset input value
+    const inp = document.getElementById('ae-id');
+    if (inp) inp.value = oldId;
+    return;
+  }
+  // Duplicate
+  if (articlesData[newId] !== undefined) {
+    toast(`ID "${newId}" 已存在，请换一个`, 'err');
+    const inp = document.getElementById('ae-id');
+    if (inp) inp.value = oldId;
+    return;
+  }
+  // Invalid characters: only letters, digits, hyphens, underscores
+  if (!/^[a-zA-Z0-9_-]+$/.test(newId)) {
+    toast('ID 只能包含字母、数字、连字符和下划线', 'err');
+    const inp = document.getElementById('ae-id');
+    if (inp) inp.value = oldId;
+    return;
+  }
+
+  // Rebuild articlesData preserving key order
+  const reordered = {};
+  Object.keys(articlesData).forEach(k => {
+    reordered[k === oldId ? newId : k] = articlesData[k];
+  });
+  articlesData = reordered;
+  selectedArticleId = newId;
+
+  renderArticleList();
+  // Re-select and re-render editor with new id
+  renderArticleEditor(newId);
+  const el = document.querySelector(`.article-item[data-id="${newId}"]`);
+  if (el) el.classList.add('selected');
+  toast(`ID 已重命名: ${oldId} → ${newId}`, 'ok');
+}
+
+async function saveArticles() {
+  // Re-read current textarea values (they may not have fired onchange if user is still typing)
+  // Serialize articlesData to JS
+  const content = serializeArticles();
+  await apiPost('/api/data/articles', { content });
+  // Invalidate raw editor
+  const raw = document.getElementById('raw-wrap-articles');
+  if (raw) delete raw.dataset.loaded;
+  toast('✅ articles.js 已保存', 'ok');
+}
+
+function serializeArticles() {
+  const entries = Object.entries(articlesData).map(([id, a]) => {
+    const bodyStr = (a.body||[]).map(item => {
+      if (typeof item === 'string') return `      ${JSON.stringify(item)}`;
+      else return `      { type: ${JSON.stringify(item.type)}, src: ${JSON.stringify(item.src||'')}, caption: ${JSON.stringify(item.caption||'')} }`;
+    }).join(',\n');
+
+    const detailsStr = (a.details||[]).map(d => `      { text: ${JSON.stringify(d.text||'')} }`).join(',\n');
+
+    return `  ${JSON.stringify(id)}: {
+    title: ${JSON.stringify(a.title||'')},
+    subtitle: ${JSON.stringify(a.subtitle||'')},
+    date: ${JSON.stringify(a.date||'')},
+    site: ${JSON.stringify(a.site||'')},
+    author: ${JSON.stringify(a.author||'')},
+    img: ${JSON.stringify(a.img||'')},
+    abstract: ${JSON.stringify(a.abstract||'')},
+    body: [
+${bodyStr}
+    ],
+    link: ${JSON.stringify(a.link||'')},
+    details: [
+${detailsStr}
+    ]
+  }`;
+  });
+  return `// src/data/articles.js\n\nexport const ARTICLE_CONTENT = {\n${entries.join(',\n')}\n};\n`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TEAM
+// ═══════════════════════════════════════════════════════════════════════════
+async function loadTeam() {
+  const res = await apiGet('/api/parsed/team');
+  if (!res.ok) { toast('解析 team.js 失败: ' + (res.error||''), 'err'); return; }
+  teamData = res.data;
+  renderTeam();
+}
+
+const TEAM_SECTIONS = [
+  { key: 'postphd', label: 'Postdoc Researchers' },
+  { key: 'phd', label: 'Ph.D. Students' },
+  { key: 'mst', label: 'Master Students' },
+  { key: 'ra', label: 'Research Assistants' },
+  { key: 'vst', label: 'Visiting Students' },
+  { key: 'vsc', label: 'Visiting Scholars' },
+  { key: 'alu', label: 'Alumni' },
+];
+
+function renderTeam() {
+  const body = document.getElementById('team-body');
+  let html = TEAM_SECTIONS.map(sec => {
+    const members = teamData[sec.key] || [];
+    const memberHtml = members.map((m,i) => `
+      <div class="member-item">
+        <div style="width:40px;height:40px;border-radius:50%;overflow:hidden;background:var(--surface2);flex-shrink:0">
+          <img src="${API}${m.img||''}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">
+        </div>
+        <div class="member-name">${m.name}</div>
+        <div class="member-role">${m.role||''}</div>
+        <div class="member-btns">
+          <button class="block-btn" onclick="editMember('${sec.key}',${i})">✏ 编辑</button>
+          <button class="block-btn" style="color:var(--red)" onclick="deleteMember('${sec.key}',${i})">✕</button>
+        </div>
+      </div>
+    `).join('');
+    return `
+      <div class="team-section-title">${sec.label} (${members.length})</div>
+      <div class="member-list">${memberHtml}</div>
+      <button class="btn btn-ghost" style="font-size:12px;padding:4px 12px;margin-bottom:12px" onclick="addMember('${sec.key}')">+ 添加成员</button>
+    `;
+  }).join('');
+  body.innerHTML = html;
+}
+
+function editMember(secKey, idx) {
+  const m = teamData[secKey][idx];
+  const fields = ['name','role','email','homepage','img'];
+  const vals = fields.map(f => prompt(`${f}:`, m[f]||''));
+  if (vals[0] === null) return;
+  fields.forEach((f,i) => { if(vals[i]!==null) m[f]=vals[i]; });
+  renderTeam();
+}
+function deleteMember(secKey, idx) {
+  if (!confirm('确认删除？')) return;
+  teamData[secKey].splice(idx, 1);
+  renderTeam();
+}
+function addMember(secKey) {
+  if (!teamData[secKey]) teamData[secKey] = [];
+  teamData[secKey].push({ name:'新成员', role:'', email:'', homepage:'', img:'' });
+  renderTeam();
+  toast('已添加，请点击编辑按钮填写详情', 'info');
+}
+
+async function saveTeam() {
+  const content = serializeTeam();
+  await apiPost('/api/data/team', { content });
+  const raw = document.getElementById('raw-wrap-team');
+  if (raw) delete raw.dataset.loaded;
+  toast('✅ team.js 已保存', 'ok');
+}
+
+function serializeTeam() {
+  const pi = teamData.pi || {};
+  const piStr = `  pi: {
+    name: ${JSON.stringify(pi.name||'')},
+    role: ${JSON.stringify(pi.role||'')},
+    bio: ${JSON.stringify(pi.bio||'')},
+    edu: ${JSON.stringify(pi.edu||[])},
+    Awards: ${JSON.stringify(pi.Awards||[])},
+    img: ${JSON.stringify(pi.img||'')}
+  }`;
+
+  const sections = TEAM_SECTIONS.map(sec => {
+    const members = teamData[sec.key] || [];
+    const arr = members.map(m => `    { name: ${JSON.stringify(m.name||'')}, role: ${JSON.stringify(m.role||'')}, email: ${JSON.stringify(m.email||'')}, homepage: ${JSON.stringify(m.homepage||'')}, img: ${JSON.stringify(m.img||'')} }`).join(',\n');
+    return `  ${sec.key}: [\n${arr}\n  ]`;
+  }).join(',\n\n');
+
+  return `// src/data/team.js\n\nexport const TEAM_DATA = {\n${piStr},\n\n${sections}\n};\n`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// PUBLICATIONS
+// ═══════════════════════════════════════════════════════════════════════════
+async function loadPublications() {
+  const res = await apiGet('/api/parsed/publications');
+  if (!res.ok) { toast('解析 publications.js 失败: ' + (res.error||''), 'err'); return; }
+  publicationsData = res.data;
+  renderPublications();
+}
+
+function renderPublications() {
+  renderItemList('publications-body', publicationsData, 'publication');
+}
+function newPublication() {
+  publicationsData.unshift({ id: Date.now(), title:'新论文', desc:'', mediaType:'image', mediaContent:'', link:'', date:'', topic:'', year: String(new Date().getFullYear()) });
+  renderPublications();
+}
+async function savePublications() {
+  const content = serializeItemList('PUBLICATION_ITEMS', publicationsData);
+  await apiPost('/api/data/publications', { content });
+  const raw = document.getElementById('raw-wrap-publications');
+  if (raw) delete raw.dataset.loaded;
+  toast('✅ publications.js 已保存', 'ok');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RESEARCH
+// ═══════════════════════════════════════════════════════════════════════════
+async function loadResearch() {
+  const res = await apiGet('/api/parsed/research');
+  if (!res.ok) { toast('解析 research.js 失败: ' + (res.error||''), 'err'); return; }
+  researchData = res.data;
+  renderResearch();
+}
+function renderResearch() {
+  renderItemList('research-body', researchData, 'research');
+}
+function newResearch() {
+  researchData.unshift({ id: Date.now(), title:'新研究项目', desc:'', mediaType:'image', mediaContent:'', link:'', date:'', topic:'', year: String(new Date().getFullYear()) });
+  renderResearch();
+}
+async function saveResearch() {
+  const content = serializeItemList('RESEARCH_PROJECTS', researchData);
+  await apiPost('/api/data/research', { content });
+  const raw = document.getElementById('raw-wrap-research');
+  if (raw) delete raw.dataset.loaded;
+  toast('✅ research.js 已保存', 'ok');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// RESOURCES
+// ═══════════════════════════════════════════════════════════════════════════
+async function loadResources() {
+  const res = await apiGet('/api/parsed/resources');
+  if (!res.ok) { toast('解析 resources.js 失败: ' + (res.error||''), 'err'); return; }
+  resourcesData = res.data;
+  renderResources();
+}
+function renderResources() {
+  renderItemList('resources-body', resourcesData, 'resources');
+}
+function newResource() {
+  resourcesData.unshift({ id: Date.now(), title:'新资源', desc:'', mediaType:'image', mediaContent:'', link:'', date:'', topic:'', year: String(new Date().getFullYear()) });
+  renderResources();
+}
+async function saveResources() {
+  const content = serializeItemList('RESOURCES_LIST_ITEMS', resourcesData);
+  await apiPost('/api/data/resources', { content });
+  const raw = document.getElementById('raw-wrap-resources');
+  if (raw) delete raw.dataset.loaded;
+  toast('✅ resources.js 已保存', 'ok');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// GENERIC ITEM LIST (Publications / Research / Resources share same UI)
+// ═══════════════════════════════════════════════════════════════════════════
+function renderItemList(containerId, data, type) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = data.map((item, idx) => {
+    // 兼容旧字段名 img，统一读 mediaContent || img
+    const imgVal = item.mediaContent || item.img || '';
+    const mType = item.mediaType || (imgVal ? 'image' : '');
+    // 预览：image显示缩略图，video/map显示类型标签
+    const previewHtml = imgVal
+      ? mType === 'image' || !mType
+        ? `<img src="${API}${imgVal}" style="height:48px;border-radius:4px;object-fit:cover;border:1px solid var(--border);margin-left:8px" onerror="this.style.display='none'">`
+        : `<span style="height:48px;padding:0 10px;border-radius:4px;border:1px solid var(--border);margin-left:8px;background:var(--surface2);color:var(--accent);font-size:11px;font-weight:700;display:inline-flex;align-items:center">${mType.toUpperCase()}</span>`
+      : '';
+    return `
+    <div class="body-block" style="margin-bottom:12px">
+      <div class="body-block-header">
+        <span class="block-type">#${item.id}</span>
+        <span style="margin-left:8px;font-size:12px;color:var(--text)">${item.title||'(无标题)'}</span>
+        <div class="block-actions">
+          <button class="block-btn" onclick="moveItem('${type}',${idx},-1)">↑</button>
+          <button class="block-btn" onclick="moveItem('${type}',${idx},1)">↓</button>
+          <button class="block-btn" style="color:var(--red)" onclick="deleteItem('${type}',${idx})">✕</button>
+        </div>
+      </div>
+      <div class="body-block-content">
+        <div class="form-editor">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Title</label>
+              <input value="${escAttr(item.title||'')}" onchange="updateItem('${type}',${idx},'title',this.value)">
+            </div>
+            <div class="form-group" style="flex:0 0 120px">
+              <label>Year (字符串)</label>
+              <input value="${escAttr(String(item.year||''))}"
+                onchange="updateItem('${type}',${idx},'year',this.value.trim())"
+                placeholder="2025">
+            </div>
+            <div class="form-group" style="flex:0 0 180px">
+              <label>Topic</label>
+              <input value="${escAttr(item.topic||'')}" onchange="updateItem('${type}',${idx},'topic',this.value)">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea onchange="updateItem('${type}',${idx},'desc',this.value)">${escHtml(item.desc||'')}</textarea>
+          </div>
+          <div class="form-row">
+            <div class="form-group" style="flex:0 0 150px">
+              <label>Media Type</label>
+              <select onchange="updateItem('${type}',${idx},'mediaType',this.value)"
+                style="background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:13px;padding:8px 10px;outline:none;cursor:pointer">
+                ${['image','video','map','custom'].map(t =>
+                  `<option value="${t}" ${(item.mediaType||'image')===t?'selected':''}>${t}</option>`
+                ).join('')}
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Media Content (mediaContent)</label>
+              <div style="display:flex;gap:6px;align-items:center">
+                <input id="mc-${type}-${idx}" value="${escAttr(imgVal)}"
+                  onchange="updateItemMedia('${type}',${idx},this.value)"
+                  placeholder="${(item.mediaType||'image')==='image'?'/images/research/xxx.png':'https://...'}"
+                  style="flex:1">
+                <button class="btn btn-ghost" style="padding:5px 10px;font-size:12px;flex-shrink:0"
+                  onclick="openMediaPicker('${type}',${idx})">🖼 浏览</button>
+                ${previewHtml}
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Link (DOI / GitHub / URL)</label>
+              <input value="${escAttr(item.link||'')}" onchange="updateItem('${type}',${idx},'link',this.value)">
+            </div>
+            <div class="form-group" style="flex:0 0 200px">
+              <label>Date / DOI display</label>
+              <input value="${escAttr(item.date||'')}" onchange="updateItem('${type}',${idx},'date',this.value)">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// updateItem 专门处理 mediaContent（同时清除旧的 img 字段）
+function updateItemMedia(type, idx, value) {
+  const item = getDataArray(type)[idx];
+  item.mediaContent = value;
+  delete item.img; // 清除旧字段名，避免两套字段并存
+  // 更新预览
+  const inp = document.getElementById(`mc-${type}-${idx}`);
+  if (!inp) return;
+  const row = inp.closest('.form-group');
+  let preview = row.querySelector('img');
+  if (value) {
+    if (!preview) {
+      preview = document.createElement('img');
+      preview.style.cssText = 'height:48px;border-radius:4px;object-fit:cover;border:1px solid var(--border);margin-left:8px';
+      preview.onerror = () => { preview.style.display='none'; };
+      row.querySelector('div').appendChild(preview);
+    }
+    preview.src = API + value;
+    preview.style.display = '';
+  } else if (preview) {
+    preview.style.display = 'none';
+  }
+}
+
+function getDataArray(type) {
+  if (type==='publication') return publicationsData;
+  if (type==='research') return researchData;
+  if (type==='resources') return resourcesData;
+}
+function getContainerId(type) {
+  if (type==='publication') return 'publications-body';
+  if (type==='research') return 'research-body';
+  if (type==='resources') return 'resources-body';
+}
+function updateItem(type, idx, field, value) {
+  getDataArray(type)[idx][field] = value;
+}
+function deleteItem(type, idx) {
+  if (!confirm('确认删除？')) return;
+  getDataArray(type).splice(idx, 1);
+  renderItemList(getContainerId(type), getDataArray(type), type);
+}
+function moveItem(type, idx, dir) {
+  const arr = getDataArray(type);
+  const ni = idx + dir;
+  if (ni < 0 || ni >= arr.length) return;
+  [arr[idx], arr[ni]] = [arr[ni], arr[idx]];
+  renderItemList(getContainerId(type), arr, type);
+}
+
+function serializeItemList(exportName, data) {
+  // Preferred field order for readability in the JS file
+  const FIELD_ORDER = ['id','title','desc','mediaType','mediaContent','link','paperLink','codeLink','demoLink','date','topic','year','venue','articleId'];
+
+  const items = data.map(item => {
+    const n = { ...item };
+
+    // 1. year → always string
+    if (n.year !== undefined) n.year = String(n.year);
+
+    // 2. rename old 'img' field → 'mediaContent'
+    if (n.img && !n.mediaContent) { n.mediaContent = n.img; delete n.img; }
+    // also clean up 'mediaContent' if it came from the old img field and is empty
+    if (n.img === '') delete n.img;
+
+    // 3. ensure mediaType exists whenever there's a mediaContent
+    if (!n.mediaType && n.mediaContent) n.mediaType = 'image';
+
+    // 4. remove empty-string fields to keep files clean (except title/desc which may be intentionally blank)
+    const KEEP_EMPTY = new Set(['title','desc','mediaContent']);
+    Object.keys(n).forEach(k => {
+      if (!KEEP_EMPTY.has(k) && n[k] === '') delete n[k];
+    });
+
+    // 5. reorder fields: known fields first, then any extras alphabetically
+    const ordered = {};
+    FIELD_ORDER.forEach(k => { if (n[k] !== undefined) ordered[k] = n[k]; });
+    Object.keys(n).sort().forEach(k => { if (ordered[k] === undefined) ordered[k] = n[k]; });
+
+    const fields = Object.entries(ordered).map(([k,v]) => `    ${k}: ${JSON.stringify(v)}`).join(',\n');
+    return `  {\n${fields}\n  }`;
+  }).join(',\n');
+  return `export const ${exportName} = [\n${items}\n];\n`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MEDIA
+// ═══════════════════════════════════════════════════════════════════════════
+async function selectFolder(btn, folder) {
+  currentFolder = folder;
+  document.querySelectorAll('.folder-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  await loadMedia(folder);
+}
+
+async function loadMedia(folder) {
+  const files = await apiGet('/api/media/list/' + folder);
+  const grid = document.getElementById('media-grid');
+  grid.innerHTML = files.map(f => {
+    const isVideo = f.path.endsWith('.mp4');
+    const media = isVideo
+      ? `<video src="${API}${f.path}" style="width:100%;height:80px;object-fit:cover"></video>`
+      : `<img src="${API}${f.path}" loading="lazy">`;
+    return `<div class="media-card" title="${f.path}">
+      ${media}
+      <div class="media-name media-path-copy" onclick="copyPath('${f.path}')">${f.name}</div>
+      <button class="media-del" onclick="deleteMedia('${f.path}')">✕</button>
+    </div>`;
+  }).join('') || '<div style="color:var(--muted);font-size:13px;padding:20px">此文件夹暂无文件</div>';
+}
+
+function copyPath(p) {
+  navigator.clipboard.writeText(p).then(() => toast('已复制路径: ' + p, 'info'));
+}
+
+async function deleteMedia(filePath) {
+  if (!confirm('确认删除文件 ' + filePath + '？')) return;
+  await apiPost('/api/media/delete', { filePath });
+  toast('已删除', 'ok');
+  loadMedia(currentFolder);
+}
+
+function handleDragOver(e) { e.preventDefault(); document.getElementById('drop-zone').classList.add('drag-over'); }
+function handleDragLeave() { document.getElementById('drop-zone').classList.remove('drag-over'); }
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.remove('drag-over');
+  uploadFiles([...e.dataTransfer.files]);
+}
+function handleFileSelect(e) { uploadFiles([...e.target.files]); e.target.value=''; }
+
+async function uploadFiles(files) {
+  if (!files.length) return;
+  document.getElementById('upload-progress').style.display = 'block';
+  const prog = document.getElementById('prog-bar');
+  prog.style.width = '10%';
+  const formData = new FormData();
+  files.forEach(f => formData.append('files', f, f.name));
+
+  try {
+    const r = await fetch(`${API}/api/media/upload/${currentFolder}`, { method:'POST', body:formData });
+    const data = await r.json();
+    prog.style.width = '100%';
+    toast(`✅ 上传完成: ${data.saved.map(f=>f.name).join(', ')}`, 'ok');
+    setTimeout(() => { document.getElementById('upload-progress').style.display='none'; prog.style.width='0%'; }, 1000);
+    loadMedia(currentFolder);
+  } catch(e) {
+    toast('上传失败: ' + e.message, 'err');
+  }
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// MEDIA PICKER (inline popup for item image fields)
+// ═══════════════════════════════════════════════════════════════════════════
+let _pickerTarget = null; // { type, idx }
+let _pickerFolder = 'research';
+const MEDIA_FOLDER_LIST = ['news','seminar','people','research','publication','resource','frontPage'];
+
+function openMediaPicker(type, idx) {
+  _pickerTarget = { type, idx };
+  // Pre-select folder based on type
+  _pickerFolder = type === 'publication' ? 'publication'
+                : type === 'research'    ? 'research'
+                : type === 'resources'   ? 'resource'
+                : 'research';
+  document.getElementById('picker-modal').style.display = 'flex';
+  renderPickerFolderTabs();
+  loadPickerMedia(_pickerFolder);
+}
+
+function closeMediaPicker() {
+  document.getElementById('picker-modal').style.display = 'none';
+  _pickerTarget = null;
+}
+
+function renderPickerFolderTabs() {
+  const bar = document.getElementById('picker-folder-bar');
+  bar.innerHTML = MEDIA_FOLDER_LIST.map(f => `
+    <button onclick="switchPickerFolder('${f}')"
+      id="ptab-${f}"
+      style="padding:5px 12px;border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid var(--border);
+             background:${f===_pickerFolder?'var(--accent)':'var(--surface2)'};
+             color:${f===_pickerFolder?'#fff':'var(--muted)'};transition:all 0.15s">
+      ${f}
+    </button>`).join('');
+}
+
+async function switchPickerFolder(folder) {
+  _pickerFolder = folder;
+  renderPickerFolderTabs();
+  await loadPickerMedia(folder);
+}
+
+async function loadPickerMedia(folder) {
+  const grid = document.getElementById('picker-grid');
+  grid.innerHTML = '<div style="color:var(--muted);padding:20px">加载中...</div>';
+  const files = await apiGet('/api/media/list/' + folder);
+  if (!files.length) {
+    grid.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:20px">此文件夹暂无文件</div>';
+    return;
+  }
+  grid.innerHTML = files.map(f => {
+    const isVideo = f.path.endsWith('.mp4');
+    const thumb = isVideo
+      ? `<div style="width:100%;height:70px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:24px">🎬</div>`
+      : `<img src="${API}${f.path}" loading="lazy" style="width:100%;height:70px;object-fit:cover;display:block">`;
+    return `<div onclick="pickMedia('${f.path}')"
+      style="background:var(--surface);border:1px solid var(--border);border-radius:6px;overflow:hidden;cursor:pointer;transition:all 0.15s"
+      onmouseover="this.style.borderColor='var(--accent)'" onmouseout="this.style.borderColor='var(--border)'">
+      ${thumb}
+      <div style="padding:4px 6px;font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${f.name}</div>
+    </div>`;
+  }).join('');
+}
+
+function pickMedia(path) {
+  if (!_pickerTarget) return;
+  const { type, idx } = _pickerTarget;
+  // Update data
+  const item = getDataArray(type)[idx];
+  item.mediaContent = path;
+  delete item.img;
+  // Update input field
+  const inp = document.getElementById(`mc-${type}-${idx}`);
+  if (inp) {
+    inp.value = path;
+    inp.dispatchEvent(new Event('change')); // trigger preview update
+  }
+  updateItemMedia(type, idx, path);
+  closeMediaPicker();
+  toast('✅ 已选择: ' + path, 'ok');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// NPM DEV / BUILD
+// ═══════════════════════════════════════════════════════════════════════════
+async function toggleDev() {
+  if (devRunning) {
+    await fetch(API + '/api/npm/stop-dev', { method:'POST' });
+    devRunning = false;
+    document.getElementById('dev-dot').className = 'dot gray';
+    document.getElementById('dev-label').textContent = 'Dev 未运行';
+    document.getElementById('btn-dev').textContent = '▶ 启动 Dev';
+    document.getElementById('btn-dev').className = 'btn btn-success';
+    toast('Dev 服务器已停止');
+  } else {
+    await fetch(API + '/api/npm/dev', { method:'POST' });
+    devRunning = true;
+    document.getElementById('dev-dot').className = 'dot green';
+    document.getElementById('dev-label').textContent = 'Dev 运行中';
+    document.getElementById('btn-dev').textContent = '⏹ 停止 Dev';
+    document.getElementById('btn-dev').className = 'btn btn-danger';
+    toast('Dev 服务器已启动 → http://localhost:5173', 'ok');
+    startLogPoll();
+  }
+}
+
+async function runBuild() {
+  await fetch(API + '/api/npm/build', { method:'POST' });
+  toast('⚙ Build 已启动，查看终端面板', 'info');
+  // Switch to terminal
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.querySelector('[data-panel="terminal"]').classList.add('active');
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-terminal').classList.add('active');
+  currentLogTab = 'build';
+  logPointer.build = 0;
+  startLogPoll();
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// TERMINAL
+// ═══════════════════════════════════════════════════════════════════════════
+function setLogTab(tab, el) {
+  document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  currentLogTab = tab;
+  document.getElementById('terminal').innerHTML = '';
+  logPointer[tab] = 0;
+}
+function clearLogs() {
+  document.getElementById('terminal').innerHTML = '';
+  logPointer[currentLogTab] = 0;
+}
+function startLogPoll() {
+  if (logPollInterval) return;
+  logPollInterval = setInterval(pollLogs, 800);
+}
+function stopLogPoll() {
+  if (logPollInterval) { clearInterval(logPollInterval); logPollInterval = null; }
+}
+async function pollLogs() {
+  try {
+    const data = await apiGet(`/api/npm/logs/${currentLogTab}?since=${logPointer[currentLogTab]}`);
+    if (data.logs && data.logs.length) {
+      const term = document.getElementById('terminal');
+      data.logs.forEach(l => {
+        const d = document.createElement('div');
+        d.className = 'log-' + l.type;
+        d.textContent = l.text;
+        term.appendChild(d);
+      });
+      term.scrollTop = term.scrollHeight;
+      logPointer[currentLogTab] = data.total;
+    }
+  } catch(e) {}
+}
+
+// evalDataFile removed — parsing is now done server-side via /api/parsed/
+// This avoids all browser-side eval issues with template literals, special chars, etc.
+
+function escAttr(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  loadArticles();
+  // Start log polling
+  startLogPoll();
+});
+</script>
+</body>
+</html>

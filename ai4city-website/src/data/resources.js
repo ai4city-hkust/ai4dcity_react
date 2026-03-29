@@ -1,5 +1,14 @@
 export const RESOURCES_LIST_ITEMS = [
   {
+    id: 7, 
+    title: "MeTreec v1.0",
+    desc: `MeTreec is a "one-stop" processing pipeline designed for individual tree point clouds:
+It receives segmented individual tree point clouds (.xyz format, Z-axis oriented upwards), calls AdTree (Du et al., 2019) to complete the 3D reconstruction, and subsequently performs mesh repair (hole filling) based on CGAL. It then calculates key tree metrics—such as Tree Height, Diameter at Breast Height (DBH), Crown Radius (CR), Crown Depth (CD), and Volume/Surface Area—from the skeleton or filtered leaf nodes. Simultaneously, it outputs a single JSON report and a batch CSV summary file.`,
+    img: "/images/resource/metree.jpg", 
+    date: "https://github.com/ai4city-hkust/Metreec-v1.0",
+    link: "https://github.com/ai4city-hkust/Metreec-v1.0",
+  },
+  {
     id: 6, 
     title: "MeTreec v1.0",
     desc: `MeTreec is a "one-stop" processing pipeline designed for individual tree point clouds:

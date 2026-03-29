@@ -172,33 +172,27 @@ const ResearchCard = ({ item }) => (
 // ---------------------------------------------------------------------------
 // ResearchListPage — main export
 // ---------------------------------------------------------------------------
-// 在组件外定义固定顺序
-const TOPIC_ORDER = [
-  'AI based 3D City Modeling',
-  'Built-environment and Urban System Understanding',
-  'Data Understanding',
-  
-];
 export const ResearchListPage = ({ title, description, items, type = 'default' }) => {
   const [selectedYear, setSelectedYear] = useState('All');
 
   // Derive sorted unique years & ordered unique topics from data
   const { years, topics } = useMemo(() => {
-  const uniqueYears = [
-    ...new Set(items.map((i) => i.year).filter(Boolean)),
-  ].sort((a, b) => b - a);
+    const uniqueYears = [
+      ...new Set(items.map((i) => i.year).filter(Boolean)),
+    ].sort((a, b) => b - a);
 
-  // 收集数据里实际出现的所有 topic
-  const presentTopics = new Set(items.map((i) => i.topic).filter(Boolean));
+    // Preserve insertion order for topics so columns stay stable
+    const seen = new Set();
+    const uniqueTopics = [];
+    for (const item of items) {
+      if (item.topic && !seen.has(item.topic)) {
+        seen.add(item.topic);
+        uniqueTopics.push(item.topic);
+      }
+    }
 
-  // 先按固定顺序排，再把不在 TOPIC_ORDER 里的追加到末尾
-  const uniqueTopics = [
-    ...TOPIC_ORDER.filter((t) => presentTopics.has(t)),
-    ...[...presentTopics].filter((t) => !TOPIC_ORDER.includes(t)),
-  ];
-
-  return { years: ['All', ...uniqueYears], topics: uniqueTopics };
-}, [items]);
+    return { years: ['All', ...uniqueYears], topics: uniqueTopics };
+  }, [items]);
 
   // Filter by year; grouping by topic happens below
   const filteredItems = useMemo(
@@ -268,8 +262,8 @@ export const ResearchListPage = ({ title, description, items, type = 'default' }
               <div key={topic} className="flex flex-col">
                 {/* Column header — matches existing site style */}
                 <div className="mb-6">
-                  <h2 className="text-xl font-bold mb-2">{topic}</h2>
-                  <div className="h-[1px] bg-gray-300 rounded-full" />
+                  <h2 className="text-2xl font-bold mb-2">{topic}</h2>
+                  <div className="h-[3px] bg-black rounded-full" />
                 </div>
 
                 {/* Cards stacked in column */}

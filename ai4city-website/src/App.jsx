@@ -72,7 +72,7 @@ export default function App() {
           <div className="pt-[81px] w-full min-h-screen">
             <ResearchListPage
               title="Research"
-              description="Open datasets and tools for urban research."
+              description="Ongoing and recent projects across AI-driven urban modeling, spatiotemporal analysis, and built environment understanding."
               items={RESEARCH_PROJECTS}
               type="publication"
               originPage={originPage}
@@ -84,7 +84,7 @@ export default function App() {
           <div className="pt-[81px] w-full min-h-screen">
             <PublicationsListPage
               title="Publications"
-              description="Open datasets and tools for urban research."
+              description="Papers from the AI4City Lab."
               items={PUBLICATION_ITEMS}
               type="publication"
               originPage={originPage}

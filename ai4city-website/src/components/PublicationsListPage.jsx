@@ -106,10 +106,10 @@ export const PublicationsListPage = ({ title, description, items, type = "defaul
                                           
                                           {/* 图片/图标区域 */}
                                           <div className="w-full md:w-1/3 aspect-video md:h-[250px] flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden order-1 md:order-2">
-                                              {item.img ? (
+                                              {item.mediaContent ? (
                                                   <a href={item.link} className="block w-full h-full cursor-pointer">
                                                       <img 
-                                                          src={item.img} 
+                                                          src={item.mediaContent} 
                                                           alt={item.title} 
                                                           className="w-full h-full object-cover hover:scale-105 transition duration-500" 
                                                       />

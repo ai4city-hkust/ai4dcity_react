@@ -10,7 +10,7 @@ export const RESEARCH_FOCUS = [
             link: "https://www.sciencedirect.com/science/article/pii/S092427162500396X?via%3Dihub"
           },
           {
-            id: 2, title: "Data Understanding",
+            id: 2, title: "Spatio-temporal (4D) Data Fusion",
             desc: `- Multi-modal data representation learning
                     - Spatio-temporal causality
                     - AI Agentic workflow
@@ -20,7 +20,7 @@ export const RESEARCH_FOCUS = [
             link: "https://www.researchgate.net/publication/390204234_gdverse_An_R_Package_for_Spatial_Stratified_Heterogeneity_Family"
           },
           {
-            id: 3, title: "Built-environment and Urban System Understanding",
+            id: 3, title: "Urban Env-Understanding",
             desc: `- Low-altitude intelligence
                     - Urban health (mobility, human diseases)
                     - Disaster Assessment

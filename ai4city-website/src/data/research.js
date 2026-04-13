@@ -5,20 +5,9 @@ export const RESEARCH_PROJECTS = [
     desc: "We propose NeighborMAE, which learns spatial dependencies by joint reconstruction of neighboring Earth Observation images. To ensure that the reconstruction remains challenging, we leverage a heuristic strategy to dynamically adjust the mask ratio and the pixel-level loss weight. Experimental results across various pretraining datasets and downstream tasks show that NeighborMAE significantly outperforms existing baselines, underscoring the value of neighboring images in Masked Image Modeling for Earth Observation and the efficacy of our designs.",
     mediaType: "image",
     mediaContent: "/images/publication/NeighborMAE.png",
-    link: "https://arxiv.org/abs/2603.02522",
-    date: "https://arxiv.org/abs/2603.02522",
-    topic: "Data Understanding",
-    year: "2026"
-  },
-  {
-    id: 1774775944202,
-    title: "BuildAnyPoint 3D Building Structured Abstraction from Diverse Point Clouds",
-    desc: "We are the first to tame Artist-Mesh (AM) generation models for severely disturbed input point clouds commonly encountered in large-scale urban observations, by introducing 3D generative priors. We design a Loosely Cascaded Diffusion Transformer (Loca-DiT) that initially recovers the underlying distribution from noisy or sparse points, followed by autoregressively encapsulating them into compact meshes.",
-    mediaType: "image",
-    mediaContent: "/images/research/BAP.png",
-    link: "https://ai4city-hkust.github.io/BuildAnyPoint/",
-    date: "http://arxiv.org/abs/2602.23645",
-    topic: "AI based 3D City Modeling",
+    link: "https://mp.weixin.qq.com/s/BNgW3xkXwxuTFll1cOIWCA",
+    date: "Mar 4 2026",
+    topic: "Spatio-temporal (4D) Data Fusion",
     year: "2026"
   },
   {
@@ -29,7 +18,18 @@ export const RESEARCH_PROJECTS = [
     mediaContent: "/images/research/workflow.png",
     link: "https://github.com/ai4city-hkust/buildingmultiview",
     date: "Mar 3 2026",
-    topic: "Built-environment and Urban System Understanding",
+    topic: "Urban Env-Understanding",
+    year: "2026"
+  },
+  {
+    id: 1774775944202,
+    title: "BuildAnyPoint 3D Building Structured Abstraction from Diverse Point Clouds",
+    desc: "We are the first to tame Artist-Mesh (AM) generation models for severely disturbed input point clouds commonly encountered in large-scale urban observations, by introducing 3D generative priors. We design a Loosely Cascaded Diffusion Transformer (Loca-DiT) that initially recovers the underlying distribution from noisy or sparse points, followed by autoregressively encapsulating them into compact meshes.",
+    mediaType: "image",
+    mediaContent: "/images/research/BAP.png",
+    link: "https://ai4city-hkust.github.io/BuildAnyPoint/",
+    date: "Mar 2 2026",
+    topic: "AI based 3D City Modeling",
     year: "2026"
   },
   {
@@ -53,7 +53,7 @@ export const RESEARCH_PROJECTS = [
     link: "https://mp.weixin.qq.com/s/Kl8IiA1A_vgr0P1F-yr30Q",
     demoLink: "https://ai4city-hkust.github.io/Sat2City/",
     date: "Oct 10 2025",
-    topic: "Built-environment and Urban System Understanding",
+    topic: "AI based 3D City Modeling",
     year: "2025",
     venue: "ICCV 2025",
     articleId: "research-multimodal"
@@ -66,7 +66,7 @@ export const RESEARCH_PROJECTS = [
     mediaContent: "/images/research/D2Ehr.png",
     link: "https://mp.weixin.qq.com/s/JEKPHoqYUTONDszWnLk1uQ",
     date: "Sep 05 2025",
-    topic: "Built-environment and Urban System Understanding",
+    topic: "AI based 3D City Modeling",
     year: "2025",
     articleId: "Depth2Elevation"
   },
@@ -77,7 +77,7 @@ export const RESEARCH_PROJECTS = [
     mediaType: "image",
     mediaContent: "/images/research/gdverse.png",
     date: "Sep 05 2025",
-    topic: "Data Understanding",
+    topic: "Spatio-temporal (4D) Data Fusion",
     year: "2025"
   }
 ];

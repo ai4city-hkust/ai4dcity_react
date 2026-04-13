@@ -7,7 +7,8 @@ export const RESOURCES_LIST_ITEMS = [
     mediaContent: "/images/resource/BuildMulview.png",
     link: "https://github.com/ai4city-hkust/buildingmultiview.git",
     date: "https://github.com/ai4city-hkust/buildingmultiview.git",
-    year: "2026"
+    year: "2026",
+    resourceType: "Code(Github)"
   },
   {
     id: 1774847951534,
@@ -17,7 +18,8 @@ export const RESOURCES_LIST_ITEMS = [
     mediaContent: "/images/publication/SKYEVEN.png",
     link: "https://github.com/Anthony-ECPKN/SkyEvent",
     date: "https://github.com/Anthony-ECPKN/SkyEvent",
-    year: "2026"
+    year: "2026",
+    resourceType: "Dataset"
   },
   {
     id: 1774778474730,
@@ -27,7 +29,30 @@ export const RESOURCES_LIST_ITEMS = [
     mediaContent: "/images/publication/微信图片_2026-03-29_181922_037.png",
     link: "https://github.com/ai4city-hkust/buildingmultiview_datasetsample",
     date: "https://github.com/ai4city-hkust/buildingmultiview_datasetsample",
-    year: "2026"
+    year: "2026",
+    resourceType: "Dataset"
+  },
+  {
+    id: 2026100,
+    title: "GlobalBuildingMap: Global 3m-Resolution Building Footprint Dataset",
+    desc: "GlobalBuildingMap (GBM) is the highest-resolution and most accurate global building map to date, generated from nearly 800,000 satellite images using a deep learning pipeline. It covers all continents except Antarctica and is the only source that covers the most populous regions of East Asia. The dataset is available under CC-BY-4.0 on mediaTUM, and the full training and inference code is released under MIT licence on GitHub.",
+    mediaType: "image",
+    mediaContent: "/images/publication/cairo.png",
+    link: "https://github.com/zhu-xlab/GlobalBuildingMap",
+    date: "Scientific Data 13, 71 (2026). DOI: 10.14459/2024MP1764505.002",
+    year: "2026",
+    resourceType: "Dataset"
+  },
+  {
+    id: 2026101,
+    title: "Guide to Open Urban Data in Singapore",
+    desc: "A comprehensive and regularly updated index of open urban datasets for Singapore, maintained by the Urban Analytics Lab at NUS. Covers building and housing data, addresses, real estate transactions, demographics, energy, transportation, geospatial data, street-level imagery, environment, biodiversity, and more. Useful for both researchers new to Singapore data and experienced urban data scientists.",
+    mediaType: "image",
+    mediaContent: "/images/resource/ScreenShot_2026-04-07_165530_020.png",
+    link: "https://ual.sg/project/open-urban-data-singapore/",
+    date: "Urban Analytics Lab, NUS. Last updated March 2026.",
+    year: "2026",
+    resourceType: "Dataset"
   },
   {
     id: 6,
@@ -36,16 +61,18 @@ export const RESOURCES_LIST_ITEMS = [
     mediaType: "image",
     mediaContent: "/images/resource/metree.jpg",
     link: "https://github.com/ai4city-hkust/Metreec-v1.0",
-    date: "https://github.com/ai4city-hkust/Metreec-v1.0"
+    date: "https://github.com/ai4city-hkust/Metreec-v1.0",
+    resourceType: "Code(Github)"
   },
   {
     id: 5,
     title: "gdverse: An R Package for Spatial Stratified Heterogeneity Family",
-    desc: "The lack of a comprehensive and user-friendly software tool has greatly limitedtheir broader application in geospatial analysis and environmental modeling. To address this gap, an R package gdverse has beendeveloped to integrate various SSH models, leveraging R's rich statistical and spatial data processing capabilities while natively supporting multicore parallel computing in the widely used R environment.",
+    desc: "The lack of a comprehensive and user-friendly software tool has greatly limited their broader application in geospatial analysis and environmental modeling. To address this gap, an R package gdverse has been developed to integrate various SSH models, leveraging R's rich statistical and spatial data processing capabilities while natively supporting multicore parallel computing in the widely used R environment.",
     mediaType: "image",
     mediaContent: "/images/resource/gdverse.png",
     link: "https://github.com/stscl/gdverse",
-    date: "https://github.com/stscl/gdverse"
+    date: "https://github.com/stscl/gdverse",
+    resourceType: "Open Package"
   },
   {
     id: "3-1",
@@ -54,7 +81,8 @@ export const RESOURCES_LIST_ITEMS = [
     mediaType: "image",
     mediaContent: "/images/resource/spEDM.png",
     link: "https://stscl.github.io/spEDM/",
-    date: "https://stscl.github.io/spEDM/ "
+    date: "https://stscl.github.io/spEDM/",
+    resourceType: "Open Package"
   },
   {
     id: "3-2",
@@ -63,7 +91,8 @@ export const RESOURCES_LIST_ITEMS = [
     mediaType: "image",
     mediaContent: "/images/resource/tEDM.png",
     link: "https://stscl.github.io/tEDM/",
-    date: "https://stscl.github.io/tEDM/"
+    date: "https://stscl.github.io/tEDM/",
+    resourceType: "Open Package"
   },
   {
     id: 4,
@@ -72,7 +101,8 @@ export const RESOURCES_LIST_ITEMS = [
     mediaType: "image",
     mediaContent: "/images/research/f2a.png",
     link: "https://github.com/ai4city-hkust/Foursquare2ArcGIS",
-    date: "https://github.com/ai4city-hkust/Foursquare2ArcGIS"
+    date: "https://github.com/ai4city-hkust/Foursquare2ArcGIS",
+    resourceType: "Code(Github)"
   },
   {
     id: 2,
@@ -81,6 +111,7 @@ export const RESOURCES_LIST_ITEMS = [
     mediaType: "image",
     mediaContent: "/images/resource/Buildingview.png",
     link: "https://github.com/Jasper0122/BuildingView",
-    date: "https://github.com/Jasper0122/BuildingView"
+    date: "https://github.com/Jasper0122/BuildingView",
+    resourceType: "Code(Github)"
   }
 ];
